@@ -1,0 +1,195 @@
+<div class="flex flex-col mb-8">
+  {% for group in group_data %}
+  <div class="-m-1.5 overflow-x-auto mb-8">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div
+        class="bg-white border border-gray-200 rounded-xl shadow-2xs overflow-hidden"
+      >
+        <div
+          class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200"
+        >
+          <div>
+            <h2 class="text-xl font-semibold text-gray-800">{{ group.name }}</h2>
+            <p class="text-sm text-gray-600">Klasemen match day terkini</p>
+          </div>
+        </div>
+
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-start whitespace-nowrap">
+                <span class="text-xs font-semibold uppercase text-gray-800"
+                  >#</span
+                >
+              </th>
+              <th scope="col" class="ps-6 lg:ps-3 xl:ps-0 pe-6 py-3 text-start">
+                <div class="flex items-center justify-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >Club</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >MP</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >W</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >D</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >L</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >GF</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >GA</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >GD</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="px-6 py-3 text-start">
+                <div class="flex items-center gap-x-2">
+                  <span class="text-xs font-semibold uppercase text-primary"
+                    >Pts</span
+                  >
+                </div>
+              </th>
+              <th scope="col" class="ps-6 lg:ps-3 xl:ps-0 pe-6 py-3 text-start">
+                <div class="flex items-center justify-center gap-x-2">
+                  <span class="text-xs font-normal uppercase text-primary"
+                    >Last 5</span
+                  >
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200">
+            {% for team in group.teams %}
+            <tr
+              class="{% if forloop.counter0|divisibleby:2 %}bg-white{% else %}bg-gray-50{% endif %} {% if team.pts == 0 and team.mp == 0 %}opacity-70 text-gray-500{% endif %}"
+            >
+              <td class="size-px whitespace-nowrap px-6 py-3">
+                <button
+                  type="button"
+                  class="flex items-center gap-x-2 text-gray-800 hover:text-gray-600 focus:outline-hidden focus:text-gray-600"
+                >
+                  <span class="text-sm text-gray-800">{{ forloop.counter }}</span>
+                </button>
+              </td>
+              <td class="h-px w-72 whitespace-nowrap">
+                <div class="ps-6 lg:ps-3 xl:ps-0 pe-6 py-3">
+                  <div class="flex items-center gap-x-3">
+                    {# Replace with team logos if available #}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="shrink-0 size-6"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="#a1a1a1"
+                        d="M12 22q-3.475-.875-5.738-3.988T4 11.1V5l8-3l8 3v6.1q0 3.8-2.262 6.913T12 22"
+                      />
+                    </svg>
+                    <div class="grow">
+                      <span class="block text-sm font-semibold text-gray-800">
+                        {{ team.name }}
+                      </span>
+                      <span class="block text-sm text-gray-500">
+                        {{ team.village }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">{{ team.mp }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">{{ team.w }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">{{ team.d }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">{{ team.l }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">{{ team.gf }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">{{ team.ga }}</span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm text-primary">
+                    {% if team.gd > 0 %}+{% endif %}{{ team.gd }}
+                  </span>
+                </div>
+              </td>
+              <td class="size-px whitespace-nowrap">
+                <div class="px-6 py-3">
+                  <span class="text-sm font-semibold text-primary">
+                    {{ team.pts }}
+                  </span>
+                </div>
+              </td>
+              <td class="h-px w-72 whitespace-nowrap">
+                <div class="px-6 py-2 flex gap-x-1">
+                  {{ team.last5_html|safe }} {# Render the pre-generated HTML directly #}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>

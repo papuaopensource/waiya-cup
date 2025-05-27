@@ -1,0 +1,49 @@
+{% load static tailwind_tags %}
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{% static 'favicon/favicon-96x96.png' %}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicon/favicon.svg' %}" />
+    <link rel="shortcut icon" href="{% static 'favicon/favicon.ico' %}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}" />
+    <meta name="apple-mobile-web-app-title" content="Waiya CUP 2025" />
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}" />
+
+    <!-- Primary Meta Tags -->
+    {% block title %}
+      
+    {% endblock title %}
+
+    <!-- django-tailwind -->
+    {% tailwind_css %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {% block extra_head %}{% endblock extra_head %}
+</head>
+
+<body>
+    <!-- Header -->
+    {% include "snippets/header.html" %}
+
+    <!-- Content -->       
+    {% block content %}
+    {% endblock content %}
+
+    <!-- Footer -->
+    {% include "snippets/footer.html" %}
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+</body>
+
+</html>

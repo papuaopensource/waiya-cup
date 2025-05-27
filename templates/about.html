@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Tentang Waiya CUP dan Sekilas tentang situs ini — Waiya CUP 2025</title>
+<meta name="title" content="Tentang Waiya CUP dan Sekilas tentang situs ini — Waiya CUP 2025" />
+<meta name="description" content="Waiya CUP adalah turnamen sepak bola antar kampung yang diselenggarakan di Tahun 2025. Situs ini menyediakan informasi tentang turnamen, jadwal pertandingan, dan hasilnya" />
+{% endblock title %}
+
+{% block content %}
+   <div class="container mx-auto px-8 py-8">
+    <h1 class="text-3xl font-bold mb-4">Tentang Waiya CUP</h1>
+    <p class="mb-4 text-muted-foreground">
+      Waiya CUP adalah turnamen sepak bola antar kampung yang diselenggarakan
+      oleh Pemerintah Kampung Waiya dengan Dukungan dari beberapa instansi
+      terkait. Turnamen ini melibatkan berbagai tim dari kampung-kampung sekitar
+      di Kabupaten Jayapura dan bertujuan untuk mempererat tali persaudaraan,
+      menciptakan lingkungan positif bagi generasi muda serta mempromosikan
+      olahraga sepak bola di kalangan masyarakat.
+    </p>
+    <p class="mb-4 text-muted-foreground">
+      Ini adalah situs tidak resmis yang dibuat dari dan untuk penggemar Waiya
+      CUP dengan tujuan utama untuk menyediakan informasi tentang turnamen,
+      termasuk jadwal pertandingan, klasemen liga, dan hasil pertandingan. Kami
+      berharap situs ini dapat menjadi sumber informasi yang berguna bagi para
+      penggemar sepak bola dan peserta turnamen.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-6 mb-2">Fitur Utama</h2>
+    <ul class="list-disc pl-5 text-muted-foreground">
+      <li>Jadwal pertandingan</li>
+      <li>Klasemen Liga</li>
+      <li>Hasil pertandingan</li>
+    </ul>
+
+    <!-- Tambah informasi singkat yg mengarahkan ke halaman kontribusi baik teknis maupun data langsung dari lapangan. karna ni aplikasi open source yang bisa ditemui di github https://github.com/papuaopensource/waiyacup/ -->
+    <h2 class="text-2xl font-semibold mt-6 mb-2">Kontribusi</h2>
+    <p class="mb-4 text-muted-foreground">
+      Situs ini adalah proyek open source yang dikembangkan oleh komunitas <a
+        href="https://papuaopensource.org"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-red-600 hover:underline">Papua Open Source</a
+      >. Kami mengundang siapa saja yang tertarik untuk berkontribusi, baik
+      dalam hal pengembangan teknis maupun penyediaan data langsung dari
+      lapangan. Kode sumber situs ini dapat ditemukan di{" "}
+      <a
+        href="https://github.com/papuaopensource/waiyacup/"
+        class="text-red-600 hover:underline">GitHub</a
+      >. Jika Anda memiliki ide atau ingin berkontribusi, silakan buka
+      <a href="/panduan/kontribusi/" class="text-red-600 hover:underline">
+        halaman kontribusi</a
+      > untuk informasi lebih lanjut.
+    </p>
+
+    <p class="mt-4 italic text-muted-foreground">
+      Terakhir diperbarui pada: <time datetime="2025-01-01">1 Juni 2025</time>
+    </p>
+  </div>
+{% endblock content %}

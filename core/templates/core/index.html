@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Klasemen & Hasil Pertandingan — Waiya CUP 2025</title>
+<meta name="title" content="Klasemen & Hasil Pertandingan — Waiya CUP 2025" />
+<meta name="description" content="Situs tidak resmi dari dan untuk penggemar Waiya CUP 2025, menyajikan jadwal, klasemen terbaru, hasil pertandingan, dan statistik tim dari turnamen sepak bola antar kampung di Kabupaten Jayapura." />
+{% endblock title %}
+
+{% block content %}
+  <div class="flex justify-center py-10">
+    <div class="max-w-xl text-center">
+      <p
+        class="mb-3 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md text-xs italic font-medium bg-gray-100 text-gray-800"
+      >
+        Unofficial Site From Fans
+      </p>
+
+      <h2
+        class="text-2xl font-bold md:text-3xl lg:leading-tight xl:leading-tight text-gray-800"
+      >
+        Waiya CUP 2025
+      </h2>
+    </div>
+  </div>
+  
+  <section
+    class="container flex flex-col space-y-10 px-4 py-10 sm:px-6 lg:px-8 mx-auto"
+  >
+    <div
+      class="text-sm font-medium text-center text-gray-500 border-b border-gray-200"
+    >
+      <ul class="flex flex-wrap -mb-px">
+        <li class="me-2">
+          <a
+            href="?tab=matches" {# Changed to URL parameter #}
+            class="inline-block p-4 {% if active_tab == 'matches' %}text-red-700 border-b-2 border-red-700{% else %}border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300{% endif %} rounded-t-lg"
+            aria-current="{% if active_tab == 'matches' %}page{% else %}false{% endif %}"
+          >Pertandingan</a
+          >
+        </li>
+        <li class="me-2">
+          <a
+            href="?tab=standings" {# Changed to URL parameter #}
+            class="inline-block p-4 {% if active_tab == 'standings' %}text-red-700 border-b-2 border-red-700{% else %}border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300{% endif %} rounded-t-lg"
+            aria-current="{% if active_tab == 'standings' %}page{% else %}false{% endif %}"
+          >Klasemen</a
+          >
+        </li>
+        <li class="me-2">
+          <a
+            href="?tab=statistics" {# Changed to URL parameter #}
+            class="inline-block p-4 {% if active_tab == 'statistics' %}text-red-700 border-b-2 border-red-700{% else %}border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300{% endif %} rounded-t-lg"
+            aria-current="{% if active_tab == 'statistics' %}page{% else %}false{% endif %}"
+          >Statistik</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    {# Dynamically include the snippet based on active_tab #}
+    {% if active_tab == 'matches' %}
+      {% include "core/snippets/matches_list.html" %}
+    {% elif active_tab == 'standings' %}
+      {% include "core/snippets/group_table.html" %}
+    {% elif active_tab == 'statistics' %}
+      {% include "core/snippets/statistics_summary.html" %}
+    {% endif %}
+
+  </section>
+{% endblock content %}

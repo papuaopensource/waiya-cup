@@ -1,0 +1,31 @@
+# Django
+*.sqlite3
+db.*
+mediafiles/
+staticfiles/
+migrations/
+__pycache__/
+schema.yml
+.pytest_cache/
+
+
+# JS
+node_modules/
+
+# IDE Setting
+.vscode/*
+.idea/*
+.history
+
+# General
+logs/
+
+# Environments 
+.env
+.env.bkp
+.venv 
+env/ 
+venv/ 
+ENV/ 
+env.bak/ 
+venv.bak/ 
