@@ -65,8 +65,12 @@ class MatchAdmin(UnfoldAdmin):
         "team2__name",
         "group",
     )
-    list_editable = ("status",)  # Allow direct editing of status and scores
-    raw_id_fields = ("team1", "team2")  # Use raw_id_fields for ForeignKey if many teams
+    list_editable = (
+        "score1",
+        "score2",
+        "status",
+    )  # Allow direct editing of status and scores
+    autocomplete_fields = ("team1", "team2")  # Use autocomplete for better UX
     date_hierarchy = "date"  # Add date hierarchy for easier navigation
 
 
