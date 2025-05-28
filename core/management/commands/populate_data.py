@@ -227,7 +227,7 @@ class Command(BaseCommand):
                 )
             )
         else:
-            time_slots = ["14:00 WIT", "16:00 WIT"]
+            time_slots = ["14:00", "16:00"]
             start_date = date.today() + timedelta(
                 days=7
             )  # Mulai seminggu dari sekarang
