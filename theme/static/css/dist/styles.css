@@ -1345,6 +1345,11 @@ body {
   margin-right: auto;
 }
 
+.my-6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .-mb-px {
   margin-bottom: -1px;
 }
@@ -1570,6 +1575,10 @@ body {
 
 .max-w-\[85rem\] {
   max-width: 85rem;
+}
+
+.max-w-none {
+  max-width: none;
 }
 
 .shrink-0 {

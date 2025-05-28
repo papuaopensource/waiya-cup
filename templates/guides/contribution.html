@@ -8,31 +8,29 @@
 
 {% block content %}
 <section class="container px-4 py-10 sm:px-6 lg:px-8 mx-auto">
-    <div class="max-w-3xl mx-auto">
-        <h1 class="text-3xl font-bold text-gray-900 mb-6">Panduan Kontribusi</h1>
-        
-        <div class="space-y-8 text-gray-700">
-            <p>Situs Waiya CUP 2025 ini adalah inisiatif dari penggemar untuk penggemar. Kami sangat menghargai kontribusi dari siapa pun yang ingin membantu menjaga data tetap akurat dan mengembangkan fitur-fitur baru.</p>
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Panduan Kontribusi</h1>
+    
+    <div class="space-y-8 prose max-w-none text-gray-700">
+        <p>Situs Waiya CUP 2025 ini adalah inisiatif dari penggemar untuk penggemar. Kami sangat menghargai kontribusi dari siapa pun yang ingin membantu menjaga data tetap akurat dan mengembangkan fitur-fitur baru.</p>
 
-            <div>
-                <h2 class="text-2xl font-semibold text-gray-800 mb-3">1. Kontribusi Data</h2>
-                <p class="mb-2">Anda bisa berkontribusi data pertandingan, tim, atau pemain langsung melalui formulir yang kami sediakan. Data yang Anda kirimkan akan kami kurasi terlebih dahulu oleh tim pengelola sebelum ditampilkan di situs.</p>
-                <p class="mb-2">Ini adalah cara yang bagus untuk membantu kami menjaga informasi tetap terkini dan akurat, bahkan jika Anda tidak memiliki akses ke panel admin. Untuk mulai berkontribusi, silakan <a href="{% url 'core:contribute_data_form' %}" class="text-red-600 hover:underline font-medium">klik di sini untuk mengisi formulir kontribusi data</a>.</p>
-            </div>
-
-            <div>
-                <h2 class="text-2xl font-semibold text-gray-800 mb-3">2. Kontribusi Kode (Pengembang)</h2>
-                <p class="mb-2">Kami menyambut baik kontribusi dari pengembang untuk meningkatkan situs ini. Berikut beberapa cara Anda bisa berkontribusi:</p>
-                <ul class="list-disc list-inside space-y-1">
-                    <li><strong class="font-medium">Laporkan Bug</strong>: Jika Anda menemukan masalah atau bug, silakan laporkan melalui repositori GitHub (jika ada).</li>
-                    <li><strong class="font-medium">Saran Fitur Baru</strong>: Punya ide untuk fitur menarik? Sampaikan saran Anda!</li>
-                    <li><strong class="font-medium">Kirim Pull Request</strong>: Jika Anda seorang pengembang, Anda bisa mengirimkan Pull Request dengan perbaikan bug atau fitur baru. Pastikan kode Anda bersih, terdokumentasi, dan mengikuti gaya penulisan yang ada.</li>
-                </ul>
-                <p class="mt-3 text-sm italic">Repositori GitHub: <a href="https://github.com/papuaopensouce//waiya-cup/" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:underline">github.com/papuaopensource/waiya-cup</a>
-            </div>
-
-            <p class="text-center italic mt-10 text-gray-600">Terima kasih atas dukungan Anda untuk Waiya CUP 2025!</p>
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-3">1. Kontribusi Data</h2>
+            <p class="mb-2">Anda bisa berkontribusi data pertandingan, tim, atau pemain langsung melalui formulir yang kami sediakan. Data yang Anda kirimkan akan kami kurasi terlebih dahulu oleh tim pengelola sebelum ditampilkan di situs.</p>
+            <p class="mb-2">Ini adalah cara yang bagus untuk membantu kami menjaga informasi tetap terkini dan akurat, bahkan jika Anda tidak memiliki akses ke panel admin. Untuk mulai berkontribusi, silakan <a href="{% url 'core:contribute_data_form' %}" class="text-red-600 hover:underline font-medium">klik di sini untuk mengisi formulir kontribusi data</a>.</p>
         </div>
+
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-3">2. Kontribusi Kode (Pengembang)</h2>
+            <p class="mb-2">Kami menyambut baik kontribusi dari pengembang untuk meningkatkan situs ini. Berikut beberapa cara Anda bisa berkontribusi:</p>
+            <ul class="list-disc list-inside space-y-1">
+                <li><strong class="font-medium">Laporkan Bug</strong>: Jika Anda menemukan masalah atau bug, silakan laporkan melalui repositori GitHub (jika ada).</li>
+                <li><strong class="font-medium">Saran Fitur Baru</strong>: Punya ide untuk fitur menarik? Sampaikan saran Anda!</li>
+                <li><strong class="font-medium">Kirim Pull Request</strong>: Jika Anda seorang pengembang, Anda bisa mengirimkan Pull Request dengan perbaikan bug atau fitur baru. Pastikan kode Anda bersih, terdokumentasi, dan mengikuti gaya penulisan yang ada.</li>
+            </ul>
+            <p class="mt-3 text-sm italic">Repositori GitHub: <a href="https://github.com/papuaopensouce//waiya-cup/" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:underline">github.com/papuaopensource/waiya-cup</a>
+        </div>
+
+        <p class="italic mt-10 text-gray-600">Terima kasih atas dukungan Anda untuk Waiya CUP 2025!</p>
     </div>
 </section>
 {% endblock content %}
