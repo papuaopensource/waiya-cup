@@ -1,6 +1,5 @@
 from django.views.generic import TemplateView
-from django.utils.html import format_html
-import datetime  # Import for match date/time
+import datetime
 
 
 class HomeListView(TemplateView):
@@ -8,38 +7,6 @@ class HomeListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # SVG Definitions (as functions for clarity, could be static strings)
-        def get_win_svg():
-            return '<svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 size-5 text-emerald-100 bg-emerald-500 rounded-full" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m9 12l2 2l4-4"></path></g></svg>'
-
-        def get_loss_svg():
-            return '<svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 size-5 text-red-100 bg-red-500 rounded-full" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m15 9l-6 6m0-6l6 6"></path></g></svg>'
-
-        def get_draw_svg():
-            return '<svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 size-5 text-gray-100 bg-gray-400 rounded-full" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></g></svg>'
-
-        def get_placeholder_svg():
-            return '<svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 size-5 text-gray-100 bg-gray-200 rounded-full" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#e7e5e4" opacity="0.3"/><path fill="#e7e5e4" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2m0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8s8 3.58 8 8s-3.58 8-8 8"/></svg>'
-
-        # Helper function to generate the list of SVG strings for last 5 matches
-        def render_last5_icons_html(last5_results):
-            icons_html = []
-            for result in last5_results:
-                if result == "W":
-                    icons_html.append(get_win_svg())
-                elif result == "L":
-                    icons_html.append(get_loss_svg())
-                elif result == "D":
-                    icons_html.append(get_draw_svg())
-                # If there's an empty string or unrecognized result, it won't add an icon here
-
-            # Fill remaining slots with placeholders up to 5
-            while len(icons_html) < 5:
-                icons_html.append(get_placeholder_svg())
-
-            # Join all SVG strings into a single HTML string
-            return format_html("".join(icons_html))
 
         # Determine the active tab from URL parameter
         # Default to 'matches' if no tab or an invalid tab is specified
@@ -382,13 +349,12 @@ class HomeListView(TemplateView):
                     teams, key=lambda x: (-x["pts"], -x["gd"], -x["gf"], x["name"])
                 )
 
-            # Process data: sort teams and generate last5_html
+            # Process data: sort teams (no need to generate HTML here)
             for group in all_group_data:
                 group["teams"] = sort_teams(group["teams"])
-                for team in group["teams"]:
-                    team["last5_html"] = render_last5_icons_html(team["last5"])
 
             context["group_data"] = all_group_data
+
         # --- Data for 'Matches' (Pertandingan) Tab ---
         elif active_tab == "matches":
             context["matches_data"] = [
