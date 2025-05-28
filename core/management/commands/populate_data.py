@@ -12,44 +12,62 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS("--- Memulai populasi data ---"))
 
-        # --- 1. Populate Teams (Sama seperti sebelumnya) ---
+        # --- 1. Populate Teams with Group Assignments ---
         self.stdout.write(self.style.SUCCESS("\n--- Memulai populasi tim ---"))
-        teams_to_create = [
-            {"name": "FC Harapan", "village": "Kampung Bahagia"},
-            {"name": "Perkasa United", "village": "Desa Maju"},
-            {"name": "Bintang Timur FC", "village": "Dusun Cahaya"},
-            {"name": "Gelora Indah", "village": "Kampung Damai"},
-            {"name": "Cendrawasih FC", "village": "Pesisir Pantai"},
-            {"name": "Elang Jaya", "village": "Bukit Tinggi"},
-            {"name": "Merah Putih FC", "village": "Pusat Kota"},
-            {"name": "Satria Muda", "village": "Perkampungan Lama"},
-            {"name": "Garuda Sakti", "village": "Lembah Hijau"},
-            {"name": "Singa Utara", "village": "Perkebunan Kopi"},
-            {"name": "Rajawali FC", "village": "Tanjung Laut"},
-            {"name": "Serigala Malam", "village": "Hutan Rimba"},
-            {"name": "Banteng Merah", "village": "Dataran Rendah"},
-            {"name": "Padi Emas FC", "village": "Sawah Luas"},
-            {"name": "Pesona Alam", "village": "Danau Biru"},
-            {"name": "Api Unggun FC", "village": "Gunung Berapi"},
-            {"name": "Samudera Raya", "village": "Kepulauan Indah"},
-            {"name": "Angkasa Biru", "village": "Langit Senja"},
+
+        # Group A teams (index 0-11: Kalsor FC to Pase Putra)
+        group_a_teams = [
+            {"name": "Kalsor FC", "village": "Kampung Bahagia"},
+            {"name": "Persebu FC", "village": "Desa Maju"},
+            {"name": "Porambu FC", "village": "Dusun Cahaya"},
+            {"name": "Swis FC", "village": "Kampung Damai"},
+            {"name": "Portas FC", "village": "Pesisir Pantai"},
+            {"name": "Waiya Jr", "village": "Bukit Tinggi"},
+            {"name": "Bemta FC", "village": "Pusat Kota"},
+            {"name": "PSK Kendate", "village": "Perkampungan Lama"},
+            {"name": "Arema FC", "village": "Lembah Hijau"},
+            {"name": "Dobukuring FC", "village": "Perkebunan Kopi"},
+            {"name": "PAS Demoi", "village": "Tanjung Laut"},
+            {"name": "Pase Putra", "village": "Hutan Rimba"},
+        ]
+
+        # Group B teams (index 12-23: Astor FC to Wasa FC)
+        group_b_teams = [
+            {"name": "Astor FC", "village": "Dataran Rendah"},
+            {"name": "Setan Merah", "village": "Sawah Luas"},
+            {"name": "Red wine Jr", "village": "Danau Biru"},
+            {"name": "Waiya Putra", "village": "Gunung Berapi"},
+            {"name": "Sokisi Putra", "village": "Kepulauan Indah"},
+            {"name": "Star Seroyena", "village": "Langit Senja"},
+            {"name": "Sebics FC", "village": "Padang Terang"},
+            {"name": "Kerikil Putra", "village": "Batu Kerikil"},
+            {"name": "Bambar Jr", "village": "Tepi Bukit"},
+            {"name": "Tanah Merah FC", "village": "Tanah Merah"},
+            {"name": "PS Pasti", "village": "Desa Pasti"},
+            {"name": "Wasa FC", "village": "Lembah Wasa"},
         ]
 
         all_teams = []  # Untuk menyimpan objek tim yang berhasil dibuat
-        for team_data in teams_to_create:
+        team_groups = {}  # Untuk menyimpan mapping tim ke grup
+
+        # Create Group A teams
+        for team_data in group_a_teams:
             try:
                 team, created = Team.objects.get_or_create(
                     name=team_data["name"], defaults={"village": team_data["village"]}
                 )
                 if created:
                     self.stdout.write(
-                        self.style.SUCCESS(f"  Berhasil membuat tim: {team.name}")
+                        self.style.SUCCESS(
+                            f"  Berhasil membuat tim Grup A: {team.name}"
+                        )
                     )
                 else:
                     self.stdout.write(
                         self.style.WARNING(f"  Tim sudah ada: {team.name}. Melewatkan.")
                     )
-                all_teams.append(team)  # Tambahkan tim ke daftar
+                all_teams.append(team)
+                team_groups[team] = "A"  # Assign to Group A
             except IntegrityError:
                 self.stdout.write(
                     self.style.ERROR(
@@ -62,7 +80,43 @@ class Command(BaseCommand):
                         f'  Terjadi kesalahan saat membuat tim {team_data["name"]}: {e}'
                     )
                 )
-        self.stdout.write(self.style.SUCCESS("--- Populasi tim selesai ---"))
+
+        # Create Group B teams
+        for team_data in group_b_teams:
+            try:
+                team, created = Team.objects.get_or_create(
+                    name=team_data["name"], defaults={"village": team_data["village"]}
+                )
+                if created:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"  Berhasil membuat tim Grup B: {team.name}"
+                        )
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.WARNING(f"  Tim sudah ada: {team.name}. Melewatkan.")
+                    )
+                all_teams.append(team)
+                team_groups[team] = "B"  # Assign to Group B
+            except IntegrityError:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f'  Gagal membuat tim {team_data["name"]} (nama sudah ada).'
+                    )
+                )
+            except Exception as e:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f'  Terjadi kesalahan saat membuat tim {team_data["name"]}: {e}'
+                    )
+                )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"--- Populasi tim selesai (Total: {len(all_teams)} tim) ---"
+            )
+        )
 
         # --- 2. Populate Players ---
         self.stdout.write(self.style.SUCCESS("\n--- Memulai populasi pemain ---"))
@@ -100,25 +154,48 @@ class Command(BaseCommand):
                 "Xavier",
                 "Yudi",
                 "Zaky",
+                "Ahmad",
+                "Bayu",
+                "Cahya",
+                "Dimas",
+                "Erick",
+                "Fauzi",
+                "Gandi",
+                "Haris",
+                "Ivan",
+                "Johan",
+                "Kevin",
+                "Lucky",
+                "Mario",
+                "Nanda",
             ]
+
             for team in all_teams:
                 # Membuat 15-20 pemain per tim
                 num_players = random.randint(15, 20)
+                used_names = set()  # Untuk memastikan nama unik dalam tim
+
                 for i in range(num_players):
-                    player_name = (
-                        random.choice(player_names) + f" {random.randint(1, 99)}"
-                    )  # Tambah angka untuk unik
+                    # Generate unique name untuk tim ini
+                    attempts = 0
+                    while attempts < 50:  # Maksimal 50 percobaan
+                        base_name = random.choice(player_names)
+                        player_name = f"{base_name} {random.randint(1, 99)}"
+                        if player_name not in used_names:
+                            used_names.add(player_name)
+                            break
+                        attempts += 1
+
+                    if attempts >= 50:
+                        player_name = f"Player {i+1} {team.name[:3]}"
+
                     try:
                         # Randomkan nilai goals, assists, clean_sheets
-                        goals = (
-                            random.randint(0, 10) if random.random() > 0.3 else 0
-                        )  # 70% chance to have goals
-                        assists = (
-                            random.randint(0, 5) if random.random() > 0.4 else 0
-                        )  # 60% chance to have assists
+                        goals = random.randint(0, 10) if random.random() > 0.3 else 0
+                        assists = random.randint(0, 5) if random.random() > 0.4 else 0
                         clean_sheets = (
                             random.randint(0, 3) if random.random() > 0.7 else 0
-                        )  # For goalkeepers, 30% chance
+                        )
 
                         player, created = Player.objects.get_or_create(
                             team=team,
@@ -130,10 +207,8 @@ class Command(BaseCommand):
                             },
                         )
                         if created:
-                            # self.stdout.write(self.style.SUCCESS(f'  Berhasil membuat pemain: {player.name} ({team.name})'))
                             pass  # Jangan terlalu banyak output untuk pemain
                     except IntegrityError:
-                        # self.stdout.write(self.style.WARNING(f'  Pemain {player_name} sudah ada di {team.name}. Melewatkan.'))
                         pass  # Jangan terlalu banyak output untuk pemain
                     except Exception as e:
                         self.stdout.write(
@@ -152,99 +227,117 @@ class Command(BaseCommand):
                 )
             )
         else:
-            groups = [
-                "A",
-                "B",
-                "C",
-                "D",
-            ]  # Sesuaikan dengan GROUP_CHOICES di model Anda
             time_slots = ["14:00 WIT", "16:00 WIT"]
             start_date = date.today() + timedelta(
                 days=7
             )  # Mulai seminggu dari sekarang
 
-            num_matches_per_matchday = (
-                len(all_teams) // 2
-            )  # Jika genap, setengah tim main tiap matchday
+            # Separate teams by group for matches
+            group_a_teams_obj = [
+                team for team in all_teams if team_groups.get(team) == "A"
+            ]
+            group_b_teams_obj = [
+                team for team in all_teams if team_groups.get(team) == "B"
+            ]
 
-            for matchday in range(1, 6):  # Buat 5 matchday
-                current_date = start_date + timedelta(
-                    days=(matchday - 1) * 2
-                )  # Setiap 2 hari ada matchday baru
+            # Create matches within each group
+            for group_name, teams_in_group in [
+                ("A", group_a_teams_obj),
+                ("B", group_b_teams_obj),
+            ]:
+                if len(teams_in_group) < 2:
+                    continue
 
-                # Acak tim untuk setiap matchday agar bervariasi
-                random.shuffle(all_teams)
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"\n  Membuat pertandingan untuk Grup {group_name}:"
+                    )
+                )
 
-                # Pastikan tim yang bermain berbeda
-                teams_for_matchday = list(all_teams)
+                for matchday in range(1, 6):  # Buat 5 matchday
+                    current_date = start_date + timedelta(days=(matchday - 1) * 2)
 
-                # Buat pertandingan
-                for i in range(num_matches_per_matchday):
-                    if len(teams_for_matchday) < 2:
-                        break  # Tidak cukup tim tersisa
+                    # Shuffle teams untuk variasi pertandingan
+                    teams_copy = list(teams_in_group)
+                    random.shuffle(teams_copy)
 
-                    team1 = teams_for_matchday.pop(0)
-                    team2 = teams_for_matchday.pop(0)
+                    # Buat pertandingan dalam grup
+                    matches_created = 0
+                    max_matches_per_day = len(teams_copy) // 2
 
-                    # Randomkan status dan skor
-                    status = "Upcoming"
-                    score1 = None
-                    score2 = None
+                    for i in range(0, len(teams_copy) - 1, 2):
+                        if matches_created >= max_matches_per_day:
+                            break
 
-                    if matchday <= 3:  # Misal, matchday 1-3 sudah selesai
-                        status = "Finished"
-                        score1 = random.randint(0, 5)
-                        score2 = random.randint(0, 5)
-                        # Pastikan tidak ada skor sama jika salah satu tim menang
-                        while (
-                            score1 == score2 and random.random() < 0.3
-                        ):  # 30% chance of draw
-                            score2 = random.randint(
-                                0, 5
-                            )  # re-roll if draw and we want a winner
+                        if i + 1 < len(teams_copy):
+                            team1 = teams_copy[i]
+                            team2 = teams_copy[i + 1]
 
-                    group_assigned = random.choice(groups)  # Acak grup
+                            # Randomkan status dan skor
+                            status = "Upcoming"
+                            score1 = None
+                            score2 = None
 
-                    try:
-                        match, created = Match.objects.get_or_create(
-                            team1=team1,
-                            team2=team2,
-                            date=current_date,
-                            time=random.choice(time_slots),
-                            matchday=matchday,
-                            defaults={
-                                "group": group_assigned,
-                                "status": status,
-                                "score1": score1,
-                                "score2": score2,
-                            },
-                        )
-                        if created:
-                            self.stdout.write(
-                                self.style.SUCCESS(
-                                    f"  Berhasil membuat pertandingan: {match.team1.name} vs {match.team2.name} (MD{matchday})"
+                            if matchday <= 3:  # Matchday 1-3 sudah selesai
+                                status = "Finished"
+                                score1 = random.randint(0, 5)
+                                score2 = random.randint(0, 5)
+                                # 30% chance untuk seri
+                                if random.random() > 0.3 and score1 == score2:
+                                    score2 = random.randint(0, 5)
+
+                            try:
+                                match, created = Match.objects.get_or_create(
+                                    team1=team1,
+                                    team2=team2,
+                                    date=current_date,
+                                    time=random.choice(time_slots),
+                                    matchday=matchday,
+                                    defaults={
+                                        "group": group_name,
+                                        "status": status,
+                                        "score1": score1,
+                                        "score2": score2,
+                                    },
                                 )
-                            )
-                        else:
-                            self.stdout.write(
-                                self.style.WARNING(
-                                    f"  Pertandingan {match.team1.name} vs {match.team2.name} (MD{matchday}) sudah ada. Melewatkan."
+                                if created:
+                                    self.stdout.write(
+                                        self.style.SUCCESS(
+                                            f"    Grup {group_name} MD{matchday}: {match.team1.name} vs {match.team2.name}"
+                                        )
+                                    )
+                                    matches_created += 1
+                                else:
+                                    self.stdout.write(
+                                        self.style.WARNING(
+                                            f"    Pertandingan {match.team1.name} vs {match.team2.name} (MD{matchday}) sudah ada."
+                                        )
+                                    )
+                            except IntegrityError:
+                                self.stdout.write(
+                                    self.style.ERROR(
+                                        f"    Gagal membuat pertandingan {team1.name} vs {team2.name} (MD{matchday})"
+                                    )
                                 )
-                            )
-                    except IntegrityError:
-                        self.stdout.write(
-                            self.style.ERROR(
-                                f"  Gagal membuat pertandingan antara {team1.name} dan {team2.name} (MD{matchday}) karena duplikasi."
-                            )
-                        )
-                    except Exception as e:
-                        self.stdout.write(
-                            self.style.ERROR(
-                                f"  Terjadi kesalahan saat membuat pertandingan ({team1.name} vs {team2.name}): {e}"
-                            )
-                        )
+                            except Exception as e:
+                                self.stdout.write(
+                                    self.style.ERROR(
+                                        f"    Error: {team1.name} vs {team2.name} - {e}"
+                                    )
+                                )
 
         self.stdout.write(self.style.SUCCESS("--- Populasi pertandingan selesai ---"))
         self.stdout.write(
             self.style.SUCCESS("\n--- Populasi data selesai sepenuhnya! ---")
+        )
+        self.stdout.write(self.style.SUCCESS(f"Total tim: {len(all_teams)}"))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Grup A: {len([t for t in all_teams if team_groups.get(t) == 'A'])} tim"
+            )
+        )
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Grup B: {len([t for t in all_teams if team_groups.get(t) == 'B'])} tim"
+            )
         )
