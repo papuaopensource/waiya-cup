@@ -1,9 +1,63 @@
 # football_app/views.py
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from datetime import date, timedelta
 from collections import defaultdict
 from .models import Team, Player, Match, models
+from django.urls import reverse_lazy
+from .forms import DataContributionForm  # Import form yang baru dibuat
+
 import random
+
+
+class ContributeDataView(FormView):
+    template_name = "core/contribute_data_form.html"
+    form_class = DataContributionForm
+    success_url = reverse_lazy("core:contribute_data_success")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if self.request.method == "POST" and "contribution_type" in self.request.POST:
+            initial["contribution_type"] = self.request.POST["contribution_type"]
+        return initial
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.request.method == "POST":
+            kwargs["data"] = self.request.POST
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Kontribusi Data"
+
+        if "form" in kwargs:
+            current_form = kwargs["form"]
+        elif self.request.method == "POST":
+            current_form = self.get_form()
+        else:
+            current_form = self.get_form()
+
+        context["selected_contribution_type"] = current_form.data.get(
+            "contribution_type", current_form.initial.get("contribution_type", "")
+        )
+
+        return context
+
+
+class ContributeDataSuccessView(TemplateView):
+    template_name = "core/contribute_data_success.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Terima Kasih!"
+        return context
 
 
 class HomeListView(TemplateView):

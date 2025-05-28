@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Kontribusi Data — Waiya CUP 2025</title>
+<meta name="title" content="Kontribusi Data — Waiya CUP 2025" />
+<meta name="description" content="Formulir untuk mengirimkan kontribusi data pertandingan, tim, atau pemain untuk turnamen Waiya CUP 2025." />
+{% endblock title %}
+
+{% block content %}
+<section class="container px-4 py-10 sm:px-6 lg:px-8 mx-auto">
+    <div class="max-w-xl mx-auto bg-white border border-gray-200 rounded-xl shadow-2xs p-8">
+        <h1 class="text-3xl font-bold text-gray-900 text-center mb-6">Kontribusi Data</h1>
+        <p class="text-gray-700 text-center mb-8">
+            Silakan isi formulir di bawah ini untuk mengirimkan kontribusi data Anda. Kami akan meninjau setiap pengiriman sebelum dipublikasikan.
+        </p>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="id_contribution_type" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ form.contribution_type.label }}
+                </label>
+                {{ form.contribution_type }}
+                {% if form.contribution_type.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.contribution_type.errors|first }}</p>
+                {% endif %}
+            </div>
+
+            {# --- Bagian Kondisional Berdasarkan selected_contribution_type --- #}
+            {% if selected_contribution_type == 'match_result' %}
+            <div class="space-y-4 border-t border-gray-200 pt-4 mt-4">
+                <h3 class="text-lg font-semibold text-gray-800">Detail Hasil Pertandingan</h3>
+                <div>
+                    <label for="{{ form.match_to_update.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.match_to_update.label }}
+                    </label>
+                    {{ form.match_to_update }}
+                    {% if form.match_to_update.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.match_to_update.errors|first }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.match_to_update.help_text }}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.new_score1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.new_score1.label }}
+                        </label>
+                        {{ form.new_score1 }}
+                        {% if form.new_score1.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.new_score1.errors|first }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.new_score1.help_text }}</p>
+                    </div>
+                    <div>
+                        <label for="{{ form.new_score2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.new_score2.label }}
+                        </label>
+                        {{ form.new_score2 }}
+                        {% if form.new_score2.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.new_score2.errors|first }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.new_score2.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+            {% elif selected_contribution_type == 'player_stats' %}
+            <div class="space-y-4 border-t border-gray-200 pt-4 mt-4">
+                <h3 class="text-lg font-semibold text-gray-800">Detail Statistik Pemain</h3>
+                <div>
+                    <label for="{{ form.player_to_update.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.player_to_update.label }}
+                    </label>
+                    {{ form.player_to_update }}
+                    {% if form.player_to_update.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.player_to_update.errors|first }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.player_to_update.help_text }}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.goals_added.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.goals_added.label }}
+                        </label>
+                        {{ form.goals_added }}
+                        {% if form.goals_added.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.goals_added.errors|first }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.goals_added.help_text }}</p>
+                    </div>
+                    <div>
+                        <label for="{{ form.assists_added.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.assists_added.label }}
+                        </label>
+                        {{ form.assists_added }}
+                        {% if form.assists_added.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.assists_added.errors|first }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.assists_added.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %} {# End conditional blocks #}
+            
+            {# --- Deskripsi Detail --- #}
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ form.description.label }}
+                </label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.description.errors|first }}</p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">{{ form.description.help_text }}</p>
+            </div>
+
+            {# Error non-field errors #}
+            {% if form.non_field_errors %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Oops!</strong>
+                    <span class="block sm:inline">{{ form.non_field_errors|first }}</span>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="{{ form.contributor_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.contributor_name.label }}
+                    </label>
+                    {{ form.contributor_name }}
+                    {% if form.contributor_name.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.contributor_name.errors|first }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.contributor_name.help_text }}</p>
+                </div>
+                <div>
+                    <label for="{{ form.contributor_email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.contributor_email.label }}
+                    </label>
+                    {{ form.contributor_email }}
+                    {% if form.contributor_email.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.contributor_email.errors|first }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.contributor_email.help_text }}</p>
+                </div>
+            </div>
+
+            <button
+                type="submit"
+                class="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+                Kirim Kontribusi
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock content %}
+
+{# Pastikan tidak ada blok extra_js terkait Alpine.js di sini lagi #}

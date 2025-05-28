@@ -3,28 +3,31 @@ from django.contrib import admin
 
 from unfold.admin import TabularInline, ModelAdmin as UnfoldAdmin
 
-from .models import Team, Player, Match
+from .models import (
+    Team,
+    Player,
+    Match,
+    DataContribution,
+)  # Import DataContribution model
 
 
 # Inline for Players within Team admin page
-class PlayerInline(TabularInline):  # TabularInline is more compact for many players
+class PlayerInline(TabularInline):
     model = Player
-    extra = 1  # Number of empty forms to display for new players
+    extra = 1
     fields = [
         "name",
         "goals",
         "assists",
         "clean_sheets",
-    ]  # Fields to show in the inline form
+    ]
 
 
 @admin.register(Team)
 class TeamAdmin(UnfoldAdmin):
     list_display = ("name", "village")
     search_fields = ("name", "village")
-    inlines = [
-        PlayerInline
-    ]  # This line makes Player objects editable directly from the Team page
+    inlines = [PlayerInline]
 
 
 @admin.register(Player)
@@ -37,12 +40,11 @@ class PlayerAdmin(UnfoldAdmin):
         "clean_sheets",
         "total_goals_assists",
     )
-    list_filter = ("team",)  # Add filters on the right sidebar
+    list_filter = ("team",)
     search_fields = (
         "name",
         "team__name",
-    )  # Allow searching by player name or team name
-    # readonly_fields = ('total_goals_assists',) # Display this calculated property as read-only
+    )
 
 
 @admin.register(Match)
@@ -57,13 +59,12 @@ class MatchAdmin(UnfoldAdmin):
         "score2",
         "matchday",
     )
-    list_filter = ("status", "group", "matchday", "date")  # Filters for matches
+    list_filter = ("status", "group", "matchday", "date")
     search_fields = (
         "team1__name",
         "team2__name",
         "group",
-    )  # Search by team names or group
-    # Organize fields in the add/change form
+    )
     fieldsets = (
         (
             None,
@@ -81,7 +82,93 @@ class MatchAdmin(UnfoldAdmin):
             "Hasil Pertandingan (Isi jika Selesai)",
             {
                 "fields": (("score1", "score2"),),
-                "classes": ("collapse",),  # This section will be collapsed by default
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+
+@admin.register(DataContribution)
+class DataContributionAdmin(UnfoldAdmin):
+    list_display = (
+        "contribution_type",
+        "contributor_name",
+        "contributor_email",
+        "status",
+        "created_at",
+        "match_to_update",
+        "player_to_update",
+        # "proposed_team_name", # Dihapus
+    )
+    list_filter = (
+        "contribution_type",
+        "status",
+        "created_at",
+    )
+    search_fields = (
+        "description",
+        "contributor_name",
+        "contributor_email",
+        "match_to_update__team1__name",
+        "match_to_update__team2__name",
+        "player_to_update__name",
+        # "proposed_team_name", # Dihapus
+    )
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "contribution_type",
+        "match_to_update",
+        "new_score1",
+        "new_score2",
+        "player_to_update",
+        "goals_added",
+        "assists_added",
+        # "proposed_team_name", # Dihapus
+        # "proposed_team_village", # Dihapus
+        "description",
+        "contributor_name",
+        "contributor_email",
+    )
+    fieldsets = (
+        (
+            "Informasi Kontribusi",
+            {
+                "fields": (
+                    "contribution_type",
+                    ("contributor_name", "contributor_email"),
+                    "description",
+                )
+            },
+        ),
+        (
+            "Detail Kontribusi Pertandingan",
+            {
+                "fields": (
+                    "match_to_update",
+                    ("new_score1", "new_score2"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Detail Kontribusi Statistik Pemain",
+            {
+                "fields": (
+                    "player_to_update",
+                    ("goals_added", "assists_added"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        # "Detail Kontribusi Tim Baru" dihapus
+        (
+            "Status & Waktu",
+            {
+                "fields": (
+                    "status",
+                    ("created_at", "updated_at"),
+                )
             },
         ),
     )
