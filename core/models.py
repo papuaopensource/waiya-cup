@@ -92,10 +92,10 @@ class DataContribution(models.Model):
     )
 
     contributor_name = models.CharField(
-        max_length=100, blank=True, null=True, help_text="Nama Anda (opsional)"
-    )
-    contributor_email = models.EmailField(
-        blank=True, null=True, help_text="Email Anda (opsional, untuk konfirmasi)"
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Tulis nama Anda (opsional).",
     )
 
     # --- Field Spesifik (tidak ada perubahan pada ini) ---
@@ -141,7 +141,7 @@ class DataContribution(models.Model):
 
     # Description tetap ada, karena bisa digunakan untuk detail tambahan pada kedua jenis kontribusi
     description = models.TextField(
-        blank=True, help_text="Jelaskan detail kontribusi Anda."
+        blank=True, help_text="Jelaskan detail kontribusi Anda. (opsional)"
     )
 
     STATUS_CHOICES = [

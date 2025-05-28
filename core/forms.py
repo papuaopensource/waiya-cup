@@ -2,7 +2,7 @@
 from django import forms
 from .models import DataContribution, Team, Player, Match
 
-# Define common Tailwind CSS classes for form widgets (tetap sama)
+# Define common Tailwind CSS classes for form widgets
 COMMON_ATTRS = {
     "class": "block w-full rounded-md border-gray-300 shadow-sm "
     "focus:border-red-500 focus:ring-red-500 sm:text-sm"
@@ -29,9 +29,19 @@ class DataContributionForm(forms.ModelForm):
         widget=forms.Select(attrs=SELECT_ATTRS),
     )
 
+    # NEW FIELD: Untuk memilih tim sebelum memilih pemain
+    team_for_player_stats = forms.ModelChoiceField(
+        queryset=Team.objects.all().order_by("name"),
+        required=False,  # Ini akan wajib di-validasi di clean() jika contribution_type = player_stats
+        label="Pilih Tim",
+        empty_label="-- Pilih Tim --",
+        # Tambahkan onchange untuk submit form lagi
+        widget=forms.Select(attrs={**SELECT_ATTRS, "onchange": "this.form.submit();"}),
+    )
+
     player_to_update = forms.ModelChoiceField(
-        queryset=Player.objects.all().select_related("team").order_by("name"),
-        required=False,
+        queryset=Player.objects.none(),  # Default kosong, akan diisi dinamis
+        required=False,  # Ini akan wajib di-validasi di clean() jika contribution_type = player_stats
         label="Pilih Pemain",
         empty_label="-- Pilih Pemain --",
         widget=forms.Select(attrs=SELECT_ATTRS),
@@ -44,25 +54,22 @@ class DataContributionForm(forms.ModelForm):
             "match_to_update",
             "new_score1",
             "new_score2",
+            "team_for_player_stats",  # Tambahkan field baru di sini
             "player_to_update",
             "goals_added",
             "assists_added",
-            # "proposed_team_name", "proposed_team_village", # Dihapus
             "description",
             "contributor_name",
-            "contributor_email",
         ]
         labels = {
             "contribution_type": "Jenis Kontribusi",
             "new_score1": "Skor Tim Kandang Baru",
             "new_score2": "Skor Tim Tandang Baru",
+            "team_for_player_stats": "Pilih Tim untuk Statistik Pemain",  # Label yang lebih spesifik
             "goals_added": "Jumlah Gol yang Ditambahkan",
             "assists_added": "Jumlah Assist yang Ditambahkan",
-            # "proposed_team_name": "Nama Tim Baru yang Diusulkan", # Dihapus
-            # "proposed_team_village": "Desa/Wilayah Asal Tim Baru", # Dihapus
             "description": "Deskripsi/Detail Tambahan",
-            "contributor_name": "Nama Anda (Opsional)",
-            "contributor_email": "Email Anda (Opsional, untuk konfirmasi)",
+            "contributor_name": "Nama Anda",
         }
         widgets = {
             "contribution_type": forms.Select(
@@ -84,8 +91,6 @@ class DataContributionForm(forms.ModelForm):
             "assists_added": forms.NumberInput(
                 attrs={**COMMON_ATTRS, "placeholder": "Contoh: 1"}
             ),
-            # "proposed_team_name": forms.TextInput(attrs={**COMMON_ATTRS, 'placeholder': 'Contoh: Garuda Muda FC'}), # Dihapus
-            # "proposed_team_village": forms.TextInput(attrs={**COMMON_ATTRS, 'placeholder': 'Contoh: Desa Jaya'}), # Dihapus
             "description": forms.Textarea(
                 attrs={
                     **TEXTAREA_ATTRS,
@@ -93,12 +98,33 @@ class DataContributionForm(forms.ModelForm):
                 }
             ),
             "contributor_name": forms.TextInput(
-                attrs={**COMMON_ATTRS, "placeholder": "Contoh: Budi Santoso"}
-            ),
-            "contributor_email": forms.EmailInput(
-                attrs={**COMMON_ATTRS, "placeholder": "contoh@email.com"}
+                attrs={**COMMON_ATTRS, "placeholder": "Contoh: Theis Andatu"}
             ),
         }
+
+    # Constructor method untuk menginisialisasi queryset player_to_update secara dinamis
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Inisialisasi queryset player_to_update
+        # Jika form sudah memiliki data POST dan contribution_type adalah 'player_stats'
+        # dan team_for_player_stats sudah dipilih
+        if self.is_bound and self.data.get("contribution_type") == "player_stats":
+            selected_team_id = self.data.get("team_for_player_stats")
+            if selected_team_id:
+                try:
+                    selected_team = Team.objects.get(pk=selected_team_id)
+                    self.fields["player_to_update"].queryset = Player.objects.filter(
+                        team=selected_team
+                    ).order_by("name")
+                except Team.DoesNotExist:
+                    self.fields["player_to_update"].queryset = Player.objects.none()
+            else:
+                self.fields["player_to_update"].queryset = Player.objects.none()
+        else:
+            self.fields["player_to_update"].queryset = (
+                Player.objects.none()
+            )  # Default kosong
 
     def clean(self):
         cleaned_data = super().clean()
@@ -107,16 +133,12 @@ class DataContributionForm(forms.ModelForm):
         # Hapus semua field yang tidak relevan agar tidak mengganggu validasi conditional
         irrelevant_fields = {
             "match_result": [
+                "team_for_player_stats",
                 "player_to_update",
                 "goals_added",
                 "assists_added",
-            ],  # proposed_team_name, proposed_team_village dihapus
-            "player_stats": [
-                "match_to_update",
-                "new_score1",
-                "new_score2",
-            ],  # proposed_team_name, proposed_team_village dihapus
-            # 'new_team' dan 'other' dihapus
+            ],
+            "player_stats": ["match_to_update", "new_score1", "new_score2"],
         }
 
         if contribution_type in irrelevant_fields:
@@ -126,6 +148,8 @@ class DataContributionForm(forms.ModelForm):
                     cleaned_data[field_name] = ""
                 elif isinstance(self.fields.get(field_name), forms.IntegerField):
                     cleaned_data[field_name] = None
+                elif isinstance(self.fields.get(field_name), forms.ModelChoiceField):
+                    cleaned_data[field_name] = None  # Untuk ForeignKey
 
         # Validasi spesifik berdasarkan tipe kontribusi
         if contribution_type == "match_result":
@@ -140,30 +164,27 @@ class DataContributionForm(forms.ModelForm):
                 self.add_error("new_score2", "Masukkan skor Tim Tandang.")
 
         elif contribution_type == "player_stats":
-            if not cleaned_data.get("player_to_update"):
-                self.add_error(
-                    "player_to_update",
-                    "Pilih pemain yang statistiknya ingin Anda laporkan.",
-                )
+            # Sekarang, team_for_player_stats harus dipilih dulu
+            if not cleaned_data.get("team_for_player_stats"):
+                self.add_error("team_for_player_stats", "Pilih tim terlebih dahulu.")
+            else:
+                # Hanya validasi player_to_update jika tim sudah dipilih
+                if not cleaned_data.get("player_to_update"):
+                    self.add_error(
+                        "player_to_update",
+                        "Pilih pemain yang statistiknya ingin Anda laporkan.",
+                    )
 
-            if (
-                cleaned_data.get("goals_added") is None
-                or cleaned_data.get("goals_added") == 0
-            ) and (
-                cleaned_data.get("assists_added") is None
-                or cleaned_data.get("assists_added") == 0
-            ):
-                self.add_error(
-                    "goals_added",
-                    "Setidaknya masukkan jumlah gol atau assist yang ditambahkan.",
-                )
-                # self.add_error('assists_added', '') # Opsional: untuk menghilangkan error dari field lain
-
-        # Tidak perlu validasi untuk 'new_team' atau 'other' lagi
-
-        # Untuk 'description', kita tidak perlu mewajibkan jika sudah ada field spesifik yang diisi
-        # Tapi jika Anda ingin description selalu ada, Anda bisa tambahkan validasi ini:
-        # if not cleaned_data.get('description'):
-        #     self.add_error('description', 'Deskripsi kontribusi wajib diisi.')
+                if (
+                    cleaned_data.get("goals_added") is None
+                    or cleaned_data.get("goals_added") == 0
+                ) and (
+                    cleaned_data.get("assists_added") is None
+                    or cleaned_data.get("assists_added") == 0
+                ):
+                    self.add_error(
+                        "goals_added",
+                        "Setidaknya masukkan jumlah gol atau assist yang ditambahkan.",
+                    )
 
         return cleaned_data

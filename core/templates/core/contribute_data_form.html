@@ -67,6 +67,21 @@
             {% elif selected_contribution_type == 'player_stats' %}
             <div class="space-y-4 border-t border-gray-200 pt-4 mt-4">
                 <h3 class="text-lg font-semibold text-gray-800">Detail Statistik Pemain</h3>
+                
+                {# NEW: Pilih Tim Dulu #}
+                <div>
+                    <label for="{{ form.team_for_player_stats.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ form.team_for_player_stats.label }}
+                    </label>
+                    {{ form.team_for_player_stats }}
+                    {% if form.team_for_player_stats.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.team_for_player_stats.errors|first }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.team_for_player_stats.help_text }}</p>
+                </div>
+
+                {# NEW: Hanya tampilkan Pilih Pemain jika tim sudah dipilih #}
+                {% if selected_team_for_player_stats %}
                 <div>
                     <label for="{{ form.player_to_update.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
                         {{ form.player_to_update.label }}
@@ -99,6 +114,9 @@
                         <p class="mt-1 text-xs text-gray-500">{{ form.assists_added.help_text }}</p>
                     </div>
                 </div>
+                {% else %}
+                <p class="text-sm text-gray-600 mt-2">Pilih tim terlebih dahulu untuk menampilkan daftar pemain.</p>
+                {% endif %} {# End if selected_team_for_player_stats #}
             </div>
             {% endif %} {# End conditional blocks #}
             
@@ -121,28 +139,15 @@
                     <span class="block sm:inline">{{ form.non_field_errors|first }}</span>
                 </div>
             {% endif %}
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="{{ form.contributor_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.contributor_name.label }}
-                    </label>
-                    {{ form.contributor_name }}
-                    {% if form.contributor_name.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ form.contributor_name.errors|first }}</p>
-                    {% endif %}
-                    <p class="mt-1 text-xs text-gray-500">{{ form.contributor_name.help_text }}</p>
-                </div>
-                <div>
-                    <label for="{{ form.contributor_email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.contributor_email.label }}
-                    </label>
-                    {{ form.contributor_email }}
-                    {% if form.contributor_email.errors %}
-                        <p class="mt-2 text-sm text-red-600">{{ form.contributor_email.errors|first }}</p>
-                    {% endif %}
-                    <p class="mt-1 text-xs text-gray-500">{{ form.contributor_email.help_text }}</p>
-                </div>
+            <div>
+                <label for="{{ form.contributor_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ form.contributor_name.label }}
+                </label>
+                {{ form.contributor_name }}
+                {% if form.contributor_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.contributor_name.errors|first }}</p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">{{ form.contributor_name.help_text }}</p>
             </div>
 
             <button
@@ -155,5 +160,3 @@
     </div>
 </section>
 {% endblock content %}
-
-{# Pastikan tidak ada blok extra_js terkait Alpine.js di sini lagi #}

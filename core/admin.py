@@ -93,12 +93,10 @@ class DataContributionAdmin(UnfoldAdmin):
     list_display = (
         "contribution_type",
         "contributor_name",
-        "contributor_email",
         "status",
         "created_at",
         "match_to_update",
         "player_to_update",
-        # "proposed_team_name", # Dihapus
     )
     list_filter = (
         "contribution_type",
@@ -108,11 +106,9 @@ class DataContributionAdmin(UnfoldAdmin):
     search_fields = (
         "description",
         "contributor_name",
-        "contributor_email",
         "match_to_update__team1__name",
         "match_to_update__team2__name",
         "player_to_update__name",
-        # "proposed_team_name", # Dihapus
     )
     readonly_fields = (
         "created_at",
@@ -124,11 +120,8 @@ class DataContributionAdmin(UnfoldAdmin):
         "player_to_update",
         "goals_added",
         "assists_added",
-        # "proposed_team_name", # Dihapus
-        # "proposed_team_village", # Dihapus
         "description",
         "contributor_name",
-        "contributor_email",
     )
     fieldsets = (
         (
@@ -136,7 +129,7 @@ class DataContributionAdmin(UnfoldAdmin):
             {
                 "fields": (
                     "contribution_type",
-                    ("contributor_name", "contributor_email"),
+                    ("contributor_name"),
                     "description",
                 )
             },
