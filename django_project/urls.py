@@ -1,3 +1,4 @@
+# project_name/urls.py (ini adalah file urls.py utama Anda)
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -9,6 +10,23 @@ urlpatterns = [
     path("site-manager/", admin.site.urls),
     path("tentang/", TemplateView.as_view(template_name="about.html"), name="about"),
     path("faq/", TemplateView.as_view(template_name="faq.html"), name="faq"),
+    # --- Tambahkan URL untuk Indeks Panduan di sini ---
+    path(
+        "panduan/",
+        TemplateView.as_view(template_name="guides/index.html"),
+        name="guides_index",
+    ),
+    # --- Akhir penambahan ---
+    path(
+        "panduan/penggunaan/",
+        TemplateView.as_view(template_name="guides/usage.html"),
+        name="guide_usage",
+    ),
+    path(
+        "panduan/kontribusi/",
+        TemplateView.as_view(template_name="guides/contribution.html"),
+        name="guide_contribution",
+    ),
     path("", include("core.urls", namespace="core")),
 ]
 

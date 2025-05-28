@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Panduan Penggunaan — Waiya CUP 2025</title>
+<meta name="title" content="Panduan Penggunaan — Waiya CUP 2025" />
+<meta name="description" content="Pelajari cara menggunakan situs Waiya CUP 2025: melihat jadwal, klasemen, statistik, dan fitur lainnya." />
+{% endblock title %}
+
+{% block content %}
+<section class="container px-4 py-10 sm:px-6 lg:px-8 mx-auto">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-bold text-neutral-900 mb-6">Panduan Penggunaan Situs</h1>
+        
+        <div class="space-y-8 text-neutral-700 prose">
+            <div>
+                <h2 class="text-2xl font-semibold text-neutral-800 mb-3">1. Navigasi Halaman Utama</h2>
+                <p class="mb-2">Halaman utama situs menyajikan informasi terkini mengenai turnamen Waiya CUP 2025.</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><strong class="font-medium">Tab "Pertandingan"</strong>: Menampilkan jadwal pertandingan, hasil terkini, dan status pertandingan (Selesai/Akan Datang). Anda bisa memilih Matchday tertentu dari dropdown.</li>
+                    <li><strong class="font-medium">Tab "Klasemen"</strong>: Menampilkan posisi tim di setiap grup, lengkap dengan poin, selisih gol, dan performa 5 pertandingan terakhir.</li>
+                    <li><strong class="font-medium">Tab "Statistik"</strong>: Menampilkan daftar top skor, top assist, dan pemain dengan kontribusi gol+assist terbanyak.</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold text-neutral-800 mb-3">2. Memahami Tabel Klasemen</h2>
+                <p class="mb-2">Tabel klasemen menyediakan informasi penting:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><strong class="font-medium">MP</strong>: Matches Played (Jumlah Pertandingan Dimainkan)</li>
+                    <li><strong class="font-medium">W</strong>: Wins (Menang)</li>
+                    <li><strong class="font-medium">D</strong>: Draws (Seri)</li>
+                    <li><strong class="font-medium">L</strong>: Losses (Kalah)</li>
+                    <li><strong class="font-medium">GF</strong>: Goals For (Gol Memasukkan)</li>
+                    <li><strong class="font-medium">GA</strong>: Goals Against (Gol Kemasukan)</li>
+                    <li><strong class="font-medium">GD</strong>: Goal Difference (Selisih Gol, GF - GA)</li>
+                    <li><strong class="font-medium">Pts</strong>: Points (Poin)</li>
+                    <li><strong class="font-medium">Last 5</strong>: Hasil 5 pertandingan terakhir (W=Menang, D=Seri, L=Kalah, abu-abu=belum ada hasil)</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold text-neutral-800 mb-3">3. Navigasi Statistik Pemain</h2>
+                <p>Bagian statistik merinci performa individu pemain:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><strong class="font-medium">Top Skor</strong>: Pemain dengan jumlah gol terbanyak.</li>
+                    <li><strong class="font-medium">Top Assist</strong>: Pemain dengan jumlah assist terbanyak.</li>
+                    <li><strong class="font-medium">Gol + Assist</strong>: Pemain dengan total kontribusi gol dan assist terbanyak.</li>
+                </ul>
+            </div>
+
+            <p class="text-center italic mt-10 text-neutral-600">Jika Anda memiliki pertanyaan lebih lanjut, silakan kunjungi halaman FAQ kami atau hubungi pengelola situs.</p>
+        </div>
+    </div>
+</section>
+{% endblock content %}
