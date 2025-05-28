@@ -1,8 +1,69 @@
 <div class="flex flex-col gap-y-8">
-  <h3 class="text-xl font-semibold text-gray-800">Jadwal & Hasil Pertandingan</h3>
+  <div class="flex justify-between items-center">
+    <h3 class="text-xl font-semibold text-gray-800">Jadwal & Hasil Pertandingan</h3>
+
+    {# Alpine.js Dropdown for Matchday Selection #}
+    <div x-data="{ open: false, selectedMatchday: '{{ initial_display_matchday }}' }" class="relative inline-block text-left">
+      <div>
+        <button
+          type="button"
+          @click="open = !open"
+          class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          id="menu-button"
+          aria-expanded="true"
+          aria-haspopup="true"
+        >
+          Matchday ke- <span x-text="selectedMatchday"></span>
+          <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
+      <div
+        x-show="open"
+        @click.away="open = false"
+        x-transition:enter="transition ease-out duration-100"
+        x-transition:enter-start="transform opacity-0 scale-95"
+        x-transition:enter-end="transform opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-75"
+        x-transition:leave-start="transform opacity-100 scale-100"
+        x-transition:leave-end="transform opacity-0 scale-95"
+        class="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby="menu-button"
+        tabindex="-1"
+      >
+        <div class="py-1" role="none">
+          {% for option in matchday_options %}
+          <a
+            href="?tab=matches&matchday={{ option.value }}"
+            class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
+            role="menuitem"
+            tabindex="-1"
+            id="menu-item-{{ forloop.counter }}"
+            @click="selectedMatchday = '{{ option.value }}'; open = false;"
+          >
+            {{ option.label }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 
   {% for match in matches_data %}
-  <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
+  <div
+    class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4"
+    {# x-show filtering is now less critical as data is pre-filtered, but can keep for consistency/transitions #}
+    x-transition:enter="transition ease-out duration-300 transform"
+    x-transition:enter-start="opacity-0 translate-y-2"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200 transform"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-2"
+  >
     <div class="flex justify-between items-center mb-3">
       <span class="text-xs font-semibold uppercase text-gray-500">{{ match.group }}</span>
       <span class="text-xs text-gray-500">
@@ -15,7 +76,17 @@
     </div>
 
     <div class="grid grid-cols-3 items-center text-center gap-x-2">
-      <div class="text-sm font-semibold text-gray-800">
+      <div class="flex flex-col items-center self-center gap-y-3 text-sm font-semibold text-gray-800">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="shrink-0 size-12"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#a1a1a1"
+            d="M12 22q-3.475-.875-5.738-3.988T4 11.1V5l8-3l8 3v6.1q0 3.8-2.262 6.913T12 22"
+          />
+        </svg>
         {{ match.team1 }}
       </div>
       <div class="text-lg font-bold text-gray-800">
@@ -25,7 +96,17 @@
           VS
         {% endif %}
       </div>
-      <div class="text-sm font-semibold text-gray-800">
+      <div class="flex flex-col items-center self-center gap-y-3 text-sm font-semibold text-gray-800">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="shrink-0 size-12"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#a1a1a1"
+            d="M12 22q-3.475-.875-5.738-3.988T4 11.1V5l8-3l8 3v6.1q0 3.8-2.262 6.913T12 22"
+          />
+        </svg>
         {{ match.team2 }}
       </div>
     </div>

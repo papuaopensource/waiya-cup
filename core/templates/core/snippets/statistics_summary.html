@@ -1,42 +1,47 @@
 <div class="flex flex-col gap-y-8">
   <h3 class="text-xl font-semibold text-gray-800">Statistik Turnamen</h3>
 
-  {# Top Scorers #}
-  <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
-    <h4 class="text-lg font-semibold text-gray-800 mb-4">Top Skor</h4>
-    {% for scorer in statistics_data.top_scorers %}
-    <div class="flex justify-between items-center py-2 border-b last:border-b-0 border-gray-100">
-      <span class="text-sm text-gray-800">{{ forloop.counter }}. {{ scorer.name }} ({{ scorer.club }})</span>
-      <span class="text-sm font-semibold text-primary">{{ scorer.goals }} Gol</span>
-    </div>
-    {% empty %}
-      <p class="text-sm text-gray-600">Belum ada data top skor.</p>
-    {% endfor %}
-  </div>
+  {# Grid for Statistics #}
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4"> {# Added md:grid-cols-3 and gap-4 #}
 
-  {# Most Assists #}
-  <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
-    <h4 class="text-lg font-semibold text-gray-800 mb-4">Assist Terbanyak</h4>
-    {% for assister in statistics_data.most_assists %}
-    <div class="flex justify-between items-center py-2 border-b last:border-b-0 border-gray-100">
-      <span class="text-sm text-gray-800">{{ forloop.counter }}. {{ assister.name }} ({{ assister.club }})</span>
-      <span class="text-sm font-semibold text-primary">{{ assister.assists }} Assist</span>
+    {# Top Scorers #}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
+      <h4 class="text-lg font-semibold text-gray-800 mb-4">Top Skor</h4>
+      {% for scorer in statistics_data.top_scorers %}
+      <div class="flex justify-between items-center py-2 border-b last:border-b-0 border-gray-100">
+        <span class="text-sm text-gray-800">{{ forloop.counter }}. {{ scorer.name }} ({{ scorer.club }})</span>
+        <span class="text-sm font-semibold text-primary">{{ scorer.goals }} Gol</span>
+      </div>
+      {% empty %}
+        <p class="text-sm text-gray-600">Belum ada data top skor.</p>
+      {% endfor %}
     </div>
-    {% empty %}
-      <p class="text-sm text-gray-600">Belum ada data assist.</p>
-    {% endfor %}
-  </div>
 
-  {# Clean Sheets #}
-  <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
-    <h4 class="text-lg font-semibold text-gray-800 mb-4">Clean Sheet</h4>
-    {% for keeper in statistics_data.clean_sheets %}
-    <div class="flex justify-between items-center py-2 border-b last:border-b-0 border-gray-100">
-      <span class="text-sm text-gray-800">{{ forloop.counter }}. {{ keeper.name }} ({{ keeper.club }})</span>
-      <span class="text-sm font-semibold text-primary">{{ keeper.clean_sheets }} Clean Sheet</span>
+    {# Most Assists #}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
+      <h4 class="text-lg font-semibold text-gray-800 mb-4">Assist Terbanyak</h4>
+      {% for assister in statistics_data.most_assists %}
+      <div class="flex justify-between items-center py-2 border-b last:border-b-0 border-gray-100">
+        <span class="text-sm text-gray-800">{{ forloop.counter }}. {{ assister.name }} ({{ assister.club }})</span>
+        <span class="text-sm font-semibold text-primary">{{ assister.assists }} Assist</span>
+      </div>
+      {% empty %}
+        <p class="text-sm text-gray-600">Belum ada data assist.</p>
+      {% endfor %}
     </div>
-    {% empty %}
-      <p class="text-sm text-gray-600">Belum ada data clean sheet.</p>
-    {% endfor %}
-  </div>
+
+    {# Goals + Assists #}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4">
+      <h4 class="text-lg font-semibold text-gray-800 mb-4">Gol + Assist</h4>
+      {% for player in statistics_data.goals_plus_assists %}
+      <div class="flex justify-between items-center py-2 border-b last:border-b-0 border-gray-100">
+        <span class="text-sm text-gray-800">{{ forloop.counter }}. {{ player.name }} ({{ player.club }})</span>
+        <span class="text-sm font-semibold text-primary">{{ player.total_g_a }} Gol+Assist</span>
+      </div>
+      {% empty %}
+        <p class="text-sm text-gray-600">Belum ada data gol + assist.</p>
+      {% endfor %}
+    </div>
+
+  </div> {# End Grid #}
 </div>

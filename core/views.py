@@ -16,6 +16,9 @@ class HomeListView(TemplateView):
 
         context["active_tab"] = active_tab
 
+        # Get the selected matchday from the URL parameter
+        selected_matchday_param = self.request.GET.get("matchday")
+
         # --- Data for 'Standings' (Klasemen) Tab ---
         if active_tab == "standings":
             all_group_data = [
@@ -34,150 +37,7 @@ class HomeListView(TemplateView):
                             "gd": 4,
                             "pts": 10,
                             "last5": ["W", "D", "W", "W"],
-                        },
-                        {
-                            "name": "Persebu FC",
-                            "village": "Kampung Persebu",
-                            "mp": 4,
-                            "w": 2,
-                            "d": 1,
-                            "l": 1,
-                            "gf": 6,
-                            "ga": 5,
-                            "gd": 1,
-                            "pts": 7,
-                            "last5": ["L", "W", "D", "W"],
-                        },
-                        {
-                            "name": "Porambu FC",
-                            "village": "Kampung Porambu",
-                            "mp": 4,
-                            "w": 2,
-                            "d": 0,
-                            "l": 2,
-                            "gf": 7,
-                            "ga": 6,
-                            "gd": 1,
-                            "pts": 6,
-                            "last5": ["W", "L", "W", "L"],
-                        },
-                        {
-                            "name": "Swis FC",
-                            "village": "Kampung Swis",
-                            "mp": 4,
-                            "w": 0,
-                            "d": 3,
-                            "l": 1,
-                            "gf": 3,
-                            "ga": 5,
-                            "gd": -2,
-                            "pts": 3,
-                            "last5": ["D", "D", "L", "D"],
-                        },
-                        {
-                            "name": "Portas FC",
-                            "village": "Kampung Portas",
-                            "mp": 4,
-                            "w": 0,
-                            "d": 0,
-                            "l": 4,
-                            "gf": 2,
-                            "ga": 10,
-                            "gd": -8,
-                            "pts": 0,
-                            "last5": ["L", "L", "L", "L"],
-                        },
-                        {
-                            "name": "Waiya Jr",
-                            "village": "Kampung Waiya",
-                            "mp": 3,
-                            "w": 1,
-                            "d": 1,
-                            "l": 1,
-                            "gf": 3,
-                            "ga": 3,
-                            "gd": 0,
-                            "pts": 4,
-                            "last5": ["W", "D", "L"],
-                        },
-                        {
-                            "name": "Bemta FC",
-                            "village": "Kampung Bemta",
-                            "mp": 3,
-                            "w": 0,
-                            "d": 2,
-                            "l": 1,
-                            "gf": 2,
-                            "ga": 3,
-                            "gd": -1,
-                            "pts": 2,
-                            "last5": ["D", "L", "D"],
-                        },
-                        {
-                            "name": "PSK Kendate",
-                            "village": "Kampung Kendate",
-                            "mp": 3,
-                            "w": 1,
-                            "d": 0,
-                            "l": 2,
-                            "gf": 4,
-                            "ga": 5,
-                            "gd": -1,
-                            "pts": 3,
-                            "last5": ["L", "W", "L"],
-                        },
-                        {
-                            "name": "Arema FC",
-                            "village": "Kampung Arema",
-                            "mp": 3,
-                            "w": 2,
-                            "d": 1,
-                            "l": 0,
-                            "gf": 7,
-                            "ga": 2,
-                            "gd": 5,
-                            "pts": 7,
-                            "last5": ["W", "D", "W"],
-                        },
-                        {
-                            "name": "Dobukurung FC",
-                            "village": "Kampung Dobukurung",
-                            "mp": 3,
-                            "w": 1,
-                            "d": 0,
-                            "l": 2,
-                            "gf": 3,
-                            "ga": 5,
-                            "gd": -2,
-                            "pts": 3,
-                            "last5": ["L", "L", "W"],
-                        },
-                        {
-                            "name": "PAS Demoi",
-                            "village": "Kampung Demoi",
-                            "mp": 3,
-                            "w": 0,
-                            "d": 1,
-                            "l": 2,
-                            "gf": 1,
-                            "ga": 4,
-                            "gd": -3,
-                            "pts": 1,
-                            "last5": ["D", "L", "L"],
-                        },
-                        {
-                            "name": "Pase Putra",
-                            "village": "Kampung Pase",
-                            "mp": 3,
-                            "w": 2,
-                            "d": 0,
-                            "l": 1,
-                            "gf": 5,
-                            "ga": 3,
-                            "gd": 2,
-                            "pts": 6,
-                            "last5": ["W", "W", "L"],
-                        },
+                        }
                     ],
                 },
                 {
@@ -195,150 +55,7 @@ class HomeListView(TemplateView):
                             "gd": 6,
                             "pts": 10,
                             "last5": ["W", "W", "D", "W"],
-                        },
-                        {
-                            "name": "Setan Merah",
-                            "village": "Kampung Setan Merah",
-                            "mp": 4,
-                            "w": 2,
-                            "d": 1,
-                            "l": 1,
-                            "gf": 7,
-                            "ga": 4,
-                            "gd": 3,
-                            "pts": 7,
-                            "last5": ["W", "L", "W", "D"],
-                        },
-                        {
-                            "name": "Red wine Jr",
-                            "village": "Kampung Red Wine",
-                            "mp": 4,
-                            "w": 1,
-                            "d": 2,
-                            "l": 1,
-                            "gf": 5,
-                            "ga": 5,
-                            "gd": 0,
-                            "pts": 5,
-                            "last5": ["D", "W", "L", "D"],
-                        },
-                        {
-                            "name": "Waiya Putra",
-                            "village": "Kampung Waiya",
-                            "mp": 4,
-                            "w": 1,
-                            "d": 1,
-                            "l": 2,
-                            "gf": 4,
-                            "ga": 6,
-                            "gd": -2,
-                            "pts": 4,
-                            "last5": ["L", "D", "W", "L"],
-                        },
-                        {
-                            "name": "Sokisi Putra",
-                            "village": "Kampung Sokisi",
-                            "mp": 4,
-                            "w": 0,
-                            "d": 3,
-                            "l": 1,
-                            "gf": 3,
-                            "ga": 4,
-                            "gd": -1,
-                            "pts": 3,
-                            "last5": ["D", "D", "L", "D"],
-                        },
-                        {
-                            "name": "Star Seroyena",
-                            "village": "Kampung Seroyena",
-                            "mp": 3,
-                            "w": 2,
-                            "d": 0,
-                            "l": 1,
-                            "gf": 6,
-                            "ga": 3,
-                            "gd": 3,
-                            "pts": 6,
-                            "last5": ["W", "L", "W"],
-                        },
-                        {
-                            "name": "Sebics FC",
-                            "village": "Kampung Sebics",
-                            "mp": 3,
-                            "w": 1,
-                            "d": 1,
-                            "l": 1,
-                            "gf": 4,
-                            "ga": 4,
-                            "gd": 0,
-                            "pts": 4,
-                            "last5": ["D", "W", "L"],
-                        },
-                        {
-                            "name": "Kerikil Putra",
-                            "village": "Kampung Kerikil",
-                            "mp": 3,
-                            "w": 0,
-                            "d": 1,
-                            "l": 2,
-                            "gf": 2,
-                            "ga": 5,
-                            "gd": -3,
-                            "pts": 1,
-                            "last5": ["L", "D", "L"],
-                        },
-                        {
-                            "name": "Bambar Jr",
-                            "village": "Kampung Bambar",
-                            "mp": 3,
-                            "w": 2,
-                            "d": 0,
-                            "l": 1,
-                            "gf": 5,
-                            "ga": 2,
-                            "gd": 3,
-                            "pts": 6,
-                            "last5": ["W", "W", "L"],
-                        },
-                        {
-                            "name": "Tanah Merah FC",
-                            "village": "Kampung Tanah Merah",
-                            "mp": 3,
-                            "w": 1,
-                            "d": 1,
-                            "l": 1,
-                            "gf": 3,
-                            "ga": 3,
-                            "gd": 0,
-                            "pts": 4,
-                            "last5": ["D", "L", "W"],
-                        },
-                        {
-                            "name": "PS Pasti",
-                            "village": "Kampung Pasti",
-                            "mp": 3,
-                            "w": 0,
-                            "d": 0,
-                            "l": 3,
-                            "gf": 1,
-                            "ga": 6,
-                            "gd": -5,
-                            "pts": 0,
-                            "last5": ["L", "L", "L"],
-                        },
-                        {
-                            "name": "Wasa FC",
-                            "village": "Kampung Wasa",
-                            "mp": 3,
-                            "w": 1,
-                            "d": 0,
-                            "l": 2,
-                            "gf": 3,
-                            "ga": 4,
-                            "gd": -1,
-                            "pts": 3,
-                            "last5": ["L", "W", "L"],
-                        },
+                        }
                     ],
                 },
             ]
@@ -357,7 +74,7 @@ class HomeListView(TemplateView):
 
         # --- Data for 'Matches' (Pertandingan) Tab ---
         elif active_tab == "matches":
-            context["matches_data"] = [
+            all_matches_data = [
                 {
                     "date": datetime.date(2025, 5, 27),
                     "time": "14:00",
@@ -367,6 +84,7 @@ class HomeListView(TemplateView):
                     "score2": 1,
                     "group": "Grup A",
                     "status": "Finished",
+                    "matchday": 1,
                 },
                 {
                     "date": datetime.date(2025, 5, 27),
@@ -377,16 +95,18 @@ class HomeListView(TemplateView):
                     "score2": 0,
                     "group": "Grup B",
                     "status": "Finished",
+                    "matchday": 1,
                 },
                 {
                     "date": datetime.date(2025, 5, 28),
                     "time": "14:00",
                     "team1": "Persada FC",
                     "team2": "Rajawali FC",
-                    "score1": None,  # For upcoming matches
+                    "score1": None,
                     "score2": None,
                     "group": "Grup A",
                     "status": "Upcoming",
+                    "matchday": 2,
                 },
                 {
                     "date": datetime.date(2025, 5, 28),
@@ -397,25 +117,143 @@ class HomeListView(TemplateView):
                     "score2": None,
                     "group": "Grup B",
                     "status": "Upcoming",
+                    "matchday": 2,
+                },
+                {
+                    "date": datetime.date(2025, 5, 29),
+                    "time": "14:00",
+                    "team1": "Another FC",
+                    "team2": "Yet Another FC",
+                    "score1": None,
+                    "score2": None,
+                    "group": "Grup C",
+                    "status": "Upcoming",
+                    "matchday": 3,
                 },
             ]
 
+            # Generate options for the matchday dropdown
+            unique_matchdays = sorted(
+                list(set(m["matchday"] for m in all_matches_data))
+            )
+            matchday_options = [
+                {"label": f"Matchday {md}", "value": str(md)}
+                for md in unique_matchdays  # Ensure value is string
+            ]
+
+            # Determine the initial matchday to display
+            # If a matchday is selected in the URL, use it.
+            # Otherwise, default to the latest matchday.
+            if selected_matchday_param:
+                try:
+                    selected_matchday_int = int(selected_matchday_param)
+                    # Ensure the selected matchday is valid
+                    if selected_matchday_int in unique_matchdays:
+                        initial_display_matchday = selected_matchday_param
+                    else:
+                        # Fallback to the latest if invalid param
+                        initial_display_matchday = (
+                            str(unique_matchdays[-1]) if unique_matchdays else ""
+                        )
+                except ValueError:
+                    # Fallback to the latest if param is not an integer
+                    initial_display_matchday = (
+                        str(unique_matchdays[-1]) if unique_matchdays else ""
+                    )
+            else:
+                # Default to the latest matchday if no param
+                initial_display_matchday = (
+                    str(unique_matchdays[-1]) if unique_matchdays else ""
+                )
+
+            # Filter matches based on the determined display matchday
+            if initial_display_matchday:
+                matches_data = [
+                    m
+                    for m in all_matches_data
+                    if str(m["matchday"]) == initial_display_matchday
+                ]
+            else:
+                matches_data = []  # No matches if no matchdays are defined
+
+            context["matches_data"] = matches_data
+            context["matchday_options"] = matchday_options
+            context["initial_display_matchday"] = (
+                initial_display_matchday  # New context variable
+            )
+
         # --- Data for 'Statistics' (Statistik) Tab ---
         elif active_tab == "statistics":
+            # Example data for top scorers and assists.
+            # In a real application, this would likely come from a database.
+            top_scorers_raw = [
+                {"name": "Pemain A", "club": "Kalsor FC", "goals": 5},
+                {"name": "Pemain B", "club": "Astor FC", "goals": 4},
+                {"name": "Pemain C", "club": "Mamba FC", "goals": 3},
+                {"name": "Pemain D", "club": "Bintang FC", "goals": 3},
+                {"name": "Pemain E", "club": "Kalsor FC", "goals": 2},
+            ]
+            most_assists_raw = [
+                {"name": "Pemain X", "club": "Bintang FC", "assists": 3},
+                {"name": "Pemain Y", "club": "Kalsor FC", "assists": 2},
+                {"name": "Pemain Z", "club": "Astor FC", "assists": 2},
+                {
+                    "name": "Pemain A",
+                    "club": "Kalsor FC",
+                    "assists": 1,
+                },  # Pemain A juga punya assist
+            ]
+
+            # Calculate Goals + Assists
+            player_stats = {}
+            for scorer in top_scorers_raw:
+                player_stats[scorer["name"]] = {
+                    "club": scorer["club"],
+                    "goals": scorer["goals"],
+                    "assists": 0,  # Initialize assists
+                    "total_g_a": scorer["goals"],  # Initialize total
+                }
+
+            for assister in most_assists_raw:
+                if assister["name"] in player_stats:
+                    player_stats[assister["name"]]["assists"] = assister["assists"]
+                    player_stats[assister["name"]]["total_g_a"] += assister["assists"]
+                else:
+                    # Handle players who only have assists but no goals in top_scorers_raw
+                    player_stats[assister["name"]] = {
+                        "club": assister["club"],
+                        "goals": 0,  # Initialize goals
+                        "assists": assister["assists"],
+                        "total_g_a": assister["assists"],
+                    }
+
+            goals_plus_assists = sorted(
+                [
+                    {
+                        "name": name,
+                        "club": stats["club"],
+                        "total_g_a": stats["total_g_a"],
+                    }
+                    for name, stats in player_stats.items()
+                ],
+                key=lambda x: (
+                    -x["total_g_a"],
+                    x["name"],
+                ),  # Sort by total_g_a (desc), then name (asc)
+            )
+
             context["statistics_data"] = {
-                "top_scorers": [
-                    {"name": "Pemain A", "club": "Kalsor FC", "goals": 5},
-                    {"name": "Pemain B", "club": "Astor FC", "goals": 4},
-                    {"name": "Pemain C", "club": "Mamba FC", "goals": 3},
-                ],
-                "most_assists": [
-                    {"name": "Pemain X", "club": "Bintang FC", "assists": 3},
-                    {"name": "Pemain Y", "club": "Kalsor FC", "assists": 2},
-                ],
-                "clean_sheets": [
-                    {"name": "Kiper P", "club": "Astor FC", "clean_sheets": 2},
-                    {"name": "Kiper Q", "club": "Mamba FC", "clean_sheets": 1},
-                ],
+                "top_scorers": sorted(
+                    top_scorers_raw, key=lambda x: (-x["goals"], x["name"])
+                ),
+                "most_assists": sorted(
+                    most_assists_raw, key=lambda x: (-x["assists"], x["name"])
+                ),
+                "goals_plus_assists": goals_plus_assists,  # New data for Goals + Assists
+                # "clean_sheets": [ # Removed as per request
+                #     {"name": "Kiper P", "club": "Astor FC", "clean_sheets": 2},
+                #     {"name": "Kiper Q", "club": "Mamba FC", "clean_sheets": 1},
+                # ],
             }
 
         return context
