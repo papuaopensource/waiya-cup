@@ -41,10 +41,6 @@ class Match(models.Model):
     GROUP_CHOICES = [
         ("A", "Grup A"),
         ("B", "Grup B"),
-        ("C", "Grup C"),  # Ubah ke BI
-        ("D", "Grup D"),
-        ("E", "Grup E"),
-        ("F", "Grup F"),
     ]
 
     STATUS_CHOICES = [
