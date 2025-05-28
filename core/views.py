@@ -1,5 +1,9 @@
+# football_app/views.py
 from django.views.generic import TemplateView
-import datetime
+from datetime import date, timedelta
+from collections import defaultdict
+from .models import Team, Player, Match, models
+import random
 
 
 class HomeListView(TemplateView):
@@ -8,252 +12,240 @@ class HomeListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Determine the active tab from URL parameter
-        # Default to 'matches' if no tab or an invalid tab is specified
+        # Tentukan tab aktif dari parameter URL, default ke 'matches'
         active_tab = self.request.GET.get("tab", "matches")
         if active_tab not in ["matches", "standings", "statistics"]:
-            active_tab = "matches"  # Fallback to default
-
+            active_tab = "matches"
         context["active_tab"] = active_tab
 
-        # Get the selected matchday from the URL parameter
-        selected_matchday_param = self.request.GET.get("matchday")
+        # --- Data untuk Tab 'Matches' (Pertandingan) ---
+        if active_tab == "matches":
+            # Ambil semua data pertandingan, pilih nama tim terkait secara efisien
+            all_matches_data = (
+                Match.objects.all()
+                .select_related("team1", "team2")
+                .values(
+                    "date",
+                    "time",
+                    "team1__name",
+                    "team2__name",
+                    "score1",
+                    "score2",
+                    "group",
+                    "status",
+                    "matchday",
+                )
+            )
 
-        # --- Data for 'Standings' (Klasemen) Tab ---
-        if active_tab == "standings":
-            all_group_data = [
-                {
-                    "name": "Grup A",
-                    "teams": [
-                        {
-                            "name": "Kalsor FC",
-                            "village": "Kampung Kalsor",
-                            "mp": 4,
-                            "w": 3,
-                            "d": 1,
-                            "l": 0,
-                            "gf": 8,
-                            "ga": 4,
-                            "gd": 4,
-                            "pts": 10,
-                            "last5": ["W", "D", "W", "W"],
-                        }
-                    ],
-                },
-                {
-                    "name": "Grup B",
-                    "teams": [
-                        {
-                            "name": "Astor FC",
-                            "village": "Kampung Astor",
-                            "mp": 4,
-                            "w": 3,
-                            "d": 1,
-                            "l": 0,
-                            "gf": 9,
-                            "ga": 3,
-                            "gd": 6,
-                            "pts": 10,
-                            "last5": ["W", "W", "D", "W"],
-                        }
-                    ],
-                },
+            # Konversi QuerySet ke list of dicts untuk manipulasi lebih mudah
+            all_matches_list = list(all_matches_data)
+
+            # Dapatkan matchday unik dari semua pertandingan yang tersedia
+            unique_matchdays = sorted(
+                list(set(m["matchday"] for m in all_matches_list))
+            )
+            matchday_options = [
+                {"label": f"Matchday {md}", "value": str(md)} for md in unique_matchdays
             ]
 
-            # Function to sort teams
-            def sort_teams(teams):
-                return sorted(
-                    teams, key=lambda x: (-x["pts"], -x["gd"], -x["gf"], x["name"])
-                )
+            # Tentukan matchday awal yang akan ditampilkan (terbaru atau dipilih dari URL)
+            initial_display_matchday = None
+            if unique_matchdays:
+                if self.request.GET.get("matchday"):
+                    try:
+                        selected_matchday_int = int(self.request.GET["matchday"])
+                        if selected_matchday_int in unique_matchdays:
+                            initial_display_matchday = str(selected_matchday_int)
+                        else:
+                            initial_display_matchday = str(
+                                unique_matchdays[-1]
+                            )  # Fallback ke matchday terbaru
+                    except ValueError:
+                        initial_display_matchday = str(
+                            unique_matchdays[-1]
+                        )  # Fallback ke matchday terbaru
+                else:
+                    initial_display_matchday = str(
+                        unique_matchdays[-1]
+                    )  # Default ke matchday terbaru jika tanpa parameter
 
-            # Process data: sort teams (no need to generate HTML here)
-            for group in all_group_data:
-                group["teams"] = sort_teams(group["teams"])
+            # Filter pertandingan berdasarkan matchday yang ditentukan
+            matches_to_display = []
+            if initial_display_matchday:
+                matches_to_display = [
+                    {
+                        "date": match["date"],
+                        "time": match["time"],
+                        "team1": match["team1__name"],
+                        "team2": match["team2__name"],
+                        "score1": match["score1"],
+                        "score2": match["score2"],
+                        "group": match["group"],
+                        "status": match["status"],
+                        "matchday": match["matchday"],
+                    }
+                    for match in all_matches_list
+                    if str(match["matchday"]) == initial_display_matchday
+                ]
+
+            context["matches_data"] = matches_to_display
+            context["matchday_options"] = matchday_options
+            context["initial_display_matchday"] = initial_display_matchday
+
+        # --- Data untuk Tab 'Standings' (Klasemen) ---
+        elif active_tab == "standings":
+            # Ambil tim yang telah berpartisipasi dalam setidaknya satu pertandingan
+            participating_teams = Team.objects.filter(
+                models.Q(home_matches__isnull=False)
+                | models.Q(away_matches__isnull=False)
+            ).distinct()
+
+            standings_by_group = defaultdict(lambda: {})
+
+            # Proses pertandingan yang sudah selesai, diurutkan berdasarkan tanggal dan waktu untuk 'last5' yang benar
+            finished_matches = (
+                Match.objects.filter(status="Finished")
+                .select_related("team1", "team2")
+                .order_by("date", "time")
+            )
+
+            for match in finished_matches:
+                group_name = match.group
+
+                # Inisialisasi statistik tim jika belum ada dalam grup
+                if match.team1.name not in standings_by_group[group_name]:
+                    standings_by_group[group_name][match.team1.name] = {
+                        "name": match.team1.name,
+                        "village": match.team1.village,
+                        "mp": 0,
+                        "w": 0,
+                        "d": 0,
+                        "l": 0,
+                        "gf": 0,
+                        "ga": 0,
+                        "gd": 0,
+                        "pts": 0,
+                        "last5": [],
+                    }
+                if match.team2.name not in standings_by_group[group_name]:
+                    standings_by_group[group_name][match.team2.name] = {
+                        "name": match.team2.name,
+                        "village": match.team2.village,
+                        "mp": 0,
+                        "w": 0,
+                        "d": 0,
+                        "l": 0,
+                        "gf": 0,
+                        "ga": 0,
+                        "gd": 0,
+                        "pts": 0,
+                        "last5": [],
+                    }
+
+                team1_stats = standings_by_group[group_name][match.team1.name]
+                team2_stats = standings_by_group[group_name][match.team2.name]
+
+                # Perbarui Matches Played
+                team1_stats["mp"] += 1
+                team2_stats["mp"] += 1
+
+                # Perbarui Goals For and Against
+                team1_stats["gf"] += match.score1
+                team1_stats["ga"] += match.score2
+                team2_stats["gf"] += match.score2
+                team2_stats["ga"] += match.score1
+
+                # Perbarui Wins, Draws, Losses dan Points, serta hasil 'last5'
+                team1_result = ""
+                team2_result = ""
+
+                if match.score1 > match.score2:
+                    team1_stats["w"] += 1
+                    team2_stats["l"] += 1
+                    team1_stats["pts"] += 3
+                    team1_result = "W"
+                    team2_result = "L"
+                elif match.score2 > match.score1:
+                    team2_stats["w"] += 1
+                    team1_stats["l"] += 1
+                    team2_stats["pts"] += 3
+                    team2_result = "W"
+                    team1_result = "L"
+                else:  # Draw
+                    team1_stats["d"] += 1
+                    team2_stats["d"] += 1
+                    team1_stats["pts"] += 1
+                    team2_stats["pts"] += 1
+                    team1_result = "D"
+                    team2_result = "D"
+
+                # Perbarui Goal Difference
+                team1_stats["gd"] = team1_stats["gf"] - team1_stats["ga"]
+                team2_stats["gd"] = team2_stats["gf"] - team2_stats["ga"]
+
+                # --- Perbarui Hasil 5 Terakhir ---
+                team1_stats["last5"].append(team1_result)
+                team2_stats["last5"].append(team2_result)
+
+                if len(team1_stats["last5"]) > 5:
+                    team1_stats["last5"].pop(0)
+                if len(team2_stats["last5"]) > 5:
+                    team2_stats["last5"].pop(0)
+
+            # Konversi defaultdict ke list of dicts untuk template
+            all_group_data = []
+            for group_key in sorted(standings_by_group.keys()):
+                teams_in_group = standings_by_group[group_key].values()
+                sorted_teams = sorted(
+                    teams_in_group,
+                    key=lambda x: (-x["pts"], -x["gd"], -x["gf"], x["name"]),
+                )
+                all_group_data.append(
+                    {"name": f"Grup {group_key}", "teams": sorted_teams}
+                )
 
             context["group_data"] = all_group_data
 
-        # --- Data for 'Matches' (Pertandingan) Tab ---
-        elif active_tab == "matches":
-            all_matches_data = [
-                {
-                    "date": datetime.date(2025, 5, 27),
-                    "time": "14:00",
-                    "team1": "Kalsor FC",
-                    "team2": "Mamba FC",
-                    "score1": 2,
-                    "score2": 1,
-                    "group": "Grup A",
-                    "status": "Finished",
-                    "matchday": 1,
-                },
-                {
-                    "date": datetime.date(2025, 5, 27),
-                    "time": "16:00",
-                    "team1": "Astor FC",
-                    "team2": "Bintang FC",
-                    "score1": 3,
-                    "score2": 0,
-                    "group": "Grup B",
-                    "status": "Finished",
-                    "matchday": 1,
-                },
-                {
-                    "date": datetime.date(2025, 5, 28),
-                    "time": "14:00",
-                    "team1": "Persada FC",
-                    "team2": "Rajawali FC",
-                    "score1": None,
-                    "score2": None,
-                    "group": "Grup A",
-                    "status": "Upcoming",
-                    "matchday": 2,
-                },
-                {
-                    "date": datetime.date(2025, 5, 28),
-                    "time": "16:00",
-                    "team1": "Garuda FC",
-                    "team2": "Elang FC",
-                    "score1": None,
-                    "score2": None,
-                    "group": "Grup B",
-                    "status": "Upcoming",
-                    "matchday": 2,
-                },
-                {
-                    "date": datetime.date(2025, 5, 29),
-                    "time": "14:00",
-                    "team1": "Another FC",
-                    "team2": "Yet Another FC",
-                    "score1": None,
-                    "score2": None,
-                    "group": "Grup C",
-                    "status": "Upcoming",
-                    "matchday": 3,
-                },
-            ]
-
-            # Generate options for the matchday dropdown
-            unique_matchdays = sorted(
-                list(set(m["matchday"] for m in all_matches_data))
-            )
-            matchday_options = [
-                {"label": f"Matchday {md}", "value": str(md)}
-                for md in unique_matchdays  # Ensure value is string
-            ]
-
-            # Determine the initial matchday to display
-            # If a matchday is selected in the URL, use it.
-            # Otherwise, default to the latest matchday.
-            if selected_matchday_param:
-                try:
-                    selected_matchday_int = int(selected_matchday_param)
-                    # Ensure the selected matchday is valid
-                    if selected_matchday_int in unique_matchdays:
-                        initial_display_matchday = selected_matchday_param
-                    else:
-                        # Fallback to the latest if invalid param
-                        initial_display_matchday = (
-                            str(unique_matchdays[-1]) if unique_matchdays else ""
-                        )
-                except ValueError:
-                    # Fallback to the latest if param is not an integer
-                    initial_display_matchday = (
-                        str(unique_matchdays[-1]) if unique_matchdays else ""
-                    )
-            else:
-                # Default to the latest matchday if no param
-                initial_display_matchday = (
-                    str(unique_matchdays[-1]) if unique_matchdays else ""
-                )
-
-            # Filter matches based on the determined display matchday
-            if initial_display_matchday:
-                matches_data = [
-                    m
-                    for m in all_matches_data
-                    if str(m["matchday"]) == initial_display_matchday
-                ]
-            else:
-                matches_data = []  # No matches if no matchdays are defined
-
-            context["matches_data"] = matches_data
-            context["matchday_options"] = matchday_options
-            context["initial_display_matchday"] = (
-                initial_display_matchday  # New context variable
-            )
-
-        # --- Data for 'Statistics' (Statistik) Tab ---
+        # --- Data untuk Tab 'Statistics' (Statistik) ---
         elif active_tab == "statistics":
-            # Example data for top scorers and assists.
-            # In a real application, this would likely come from a database.
-            top_scorers_raw = [
-                {"name": "Pemain A", "club": "Kalsor FC", "goals": 5},
-                {"name": "Pemain B", "club": "Astor FC", "goals": 4},
-                {"name": "Pemain C", "club": "Mamba FC", "goals": 3},
-                {"name": "Pemain D", "club": "Bintang FC", "goals": 3},
-                {"name": "Pemain E", "club": "Kalsor FC", "goals": 2},
-            ]
-            most_assists_raw = [
-                {"name": "Pemain X", "club": "Bintang FC", "assists": 3},
-                {"name": "Pemain Y", "club": "Kalsor FC", "assists": 2},
-                {"name": "Pemain Z", "club": "Astor FC", "assists": 2},
-                {
-                    "name": "Pemain A",
-                    "club": "Kalsor FC",
-                    "assists": 1,
-                },  # Pemain A juga punya assist
-            ]
+            # Ambil semua pemain dan data tim terkait mereka
+            all_players = Player.objects.all().select_related("team")
 
-            # Calculate Goals + Assists
-            player_stats = {}
-            for scorer in top_scorers_raw:
-                player_stats[scorer["name"]] = {
-                    "club": scorer["club"],
-                    "goals": scorer["goals"],
-                    "assists": 0,  # Initialize assists
-                    "total_g_a": scorer["goals"],  # Initialize total
-                }
+            # Top Scorers: Filter pemain dengan gol, urutkan, dan format untuk template
+            top_scorers = sorted(
+                [p for p in all_players if p.goals > 0],
+                key=lambda x: (-x.goals, x.name),
+            )[:10]
 
-            for assister in most_assists_raw:
-                if assister["name"] in player_stats:
-                    player_stats[assister["name"]]["assists"] = assister["assists"]
-                    player_stats[assister["name"]]["total_g_a"] += assister["assists"]
-                else:
-                    # Handle players who only have assists but no goals in top_scorers_raw
-                    player_stats[assister["name"]] = {
-                        "club": assister["club"],
-                        "goals": 0,  # Initialize goals
-                        "assists": assister["assists"],
-                        "total_g_a": assister["assists"],
-                    }
+            # Most Assists: Filter pemain dengan assist, urutkan, dan format
+            most_assists = sorted(
+                [p for p in all_players if p.assists > 0],
+                key=lambda x: (-x.assists, x.name),
+            )[:10]
 
+            # Goals + Assists: Gunakan @property 'total_goals_assists' dari model Player
             goals_plus_assists = sorted(
-                [
-                    {
-                        "name": name,
-                        "club": stats["club"],
-                        "total_g_a": stats["total_g_a"],
-                    }
-                    for name, stats in player_stats.items()
-                ],
-                key=lambda x: (
-                    -x["total_g_a"],
-                    x["name"],
-                ),  # Sort by total_g_a (desc), then name (asc)
-            )
+                [p for p in all_players if p.total_goals_assists > 0],
+                key=lambda x: (-x.total_goals_assists, x.name),
+            )[:10]
 
             context["statistics_data"] = {
-                "top_scorers": sorted(
-                    top_scorers_raw, key=lambda x: (-x["goals"], x["name"])
-                ),
-                "most_assists": sorted(
-                    most_assists_raw, key=lambda x: (-x["assists"], x["name"])
-                ),
-                "goals_plus_assists": goals_plus_assists,  # New data for Goals + Assists
-                # "clean_sheets": [ # Removed as per request
-                #     {"name": "Kiper P", "club": "Astor FC", "clean_sheets": 2},
-                #     {"name": "Kiper Q", "club": "Mamba FC", "clean_sheets": 1},
-                # ],
+                "top_scorers": [
+                    {"name": p.name, "club": p.team.name, "goals": p.goals}
+                    for p in top_scorers
+                ],
+                "most_assists": [
+                    {"name": p.name, "club": p.team.name, "assists": p.assists}
+                    for p in most_assists
+                ],
+                "goals_plus_assists": [
+                    {
+                        "name": p.name,
+                        "club": p.team.name,
+                        "total_g_a": p.total_goals_assists,
+                    }
+                    for p in goals_plus_assists
+                ],
             }
 
         return context
