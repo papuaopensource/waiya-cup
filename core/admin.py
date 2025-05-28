@@ -1,35 +1,27 @@
 # football_app/admin.py
 from django.contrib import admin
 
-from unfold.admin import TabularInline, ModelAdmin as UnfoldAdmin
+from unfold.admin import ModelAdmin as UnfoldAdmin
 
-from .models import (
-    Team,
-    Player,
-    Match,
-    DataContribution,
-)  # Import DataContribution model
+from .models import Team, Player, Match, DataContribution
 
 
-# Inline for Players within Team admin page
-class PlayerInline(TabularInline):
-    model = Player
-    extra = 1
-    fields = [
-        "name",
-        "goals",
-        "assists",
-        "clean_sheets",
-    ]
-
-
+# --- Admin Tim ---
 @admin.register(Team)
 class TeamAdmin(UnfoldAdmin):
-    list_display = ("name", "village")
-    search_fields = ("name", "village")
-    inlines = [PlayerInline]
+    list_display = (
+        "name",
+        "village",
+    )
+    search_fields = (
+        "name",
+        "village",
+    )
+    # Tambahkan verbose_name untuk kolom
+    list_display_links = ("name",)  # Makes the name clickable to edit
 
 
+# --- Admin Pemain ---
 @admin.register(Player)
 class PlayerAdmin(UnfoldAdmin):
     list_display = (
@@ -45,61 +37,52 @@ class PlayerAdmin(UnfoldAdmin):
         "name",
         "team__name",
     )
+    raw_id_fields = ("team",)  # Use raw_id_fields for ForeignKey if many teams
 
 
+# --- Admin Pertandingan ---
 @admin.register(Match)
 class MatchAdmin(UnfoldAdmin):
     list_display = (
-        "__str__",
+        "matchday",
+        "group",
+        "team1",
+        "team2",
         "date",
         "time",
-        "group",
-        "status",
         "score1",
         "score2",
+        "status",
+    )
+    list_filter = (
+        "status",
+        "group",
+        "date",
         "matchday",
     )
-    list_filter = ("status", "group", "matchday", "date")
     search_fields = (
         "team1__name",
         "team2__name",
         "group",
     )
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    ("team1", "team2"),
-                    ("date", "time"),
-                    "group",
-                    "matchday",
-                    "status",
-                )
-            },
-        ),
-        (
-            "Hasil Pertandingan (Isi jika Selesai)",
-            {
-                "fields": (("score1", "score2"),),
-                "classes": ("collapse",),
-            },
-        ),
-    )
+    list_editable = ("status",)  # Allow direct editing of status and scores
+    raw_id_fields = ("team1", "team2")  # Use raw_id_fields for ForeignKey if many teams
+    date_hierarchy = "date"  # Add date hierarchy for easier navigation
 
 
+# --- Admin Kontribusi Data ---
 @admin.register(DataContribution)
 class DataContributionAdmin(UnfoldAdmin):
     list_display = (
         "contribution_type",
         "contributor_name",
+        "match_to_update",
+        "new_score1",
+        "new_score2",
         "status",
         "created_at",
-        "match_to_update",
-        "player_to_update",
     )
     list_filter = (
-        "contribution_type",
         "status",
         "created_at",
     )
@@ -108,7 +91,6 @@ class DataContributionAdmin(UnfoldAdmin):
         "contributor_name",
         "match_to_update__team1__name",
         "match_to_update__team2__name",
-        "player_to_update__name",
     )
     readonly_fields = (
         "created_at",
@@ -117,9 +99,6 @@ class DataContributionAdmin(UnfoldAdmin):
         "match_to_update",
         "new_score1",
         "new_score2",
-        "player_to_update",
-        "goals_added",
-        "assists_added",
         "description",
         "contributor_name",
     )
@@ -129,7 +108,7 @@ class DataContributionAdmin(UnfoldAdmin):
             {
                 "fields": (
                     "contribution_type",
-                    ("contributor_name"),
+                    "contributor_name",
                     "description",
                 )
             },
@@ -141,20 +120,8 @@ class DataContributionAdmin(UnfoldAdmin):
                     "match_to_update",
                     ("new_score1", "new_score2"),
                 ),
-                "classes": ("collapse",),
             },
         ),
-        (
-            "Detail Kontribusi Statistik Pemain",
-            {
-                "fields": (
-                    "player_to_update",
-                    ("goals_added", "assists_added"),
-                ),
-                "classes": ("collapse",),
-            },
-        ),
-        # "Detail Kontribusi Tim Baru" dihapus
         (
             "Status & Waktu",
             {

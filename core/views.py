@@ -14,25 +14,6 @@ class ContributeDataView(FormView):
     form_class = DataContributionForm
     success_url = reverse_lazy("core:contribute_data_success")
 
-    def get_initial(self):
-        initial = super().get_initial()
-        if self.request.method == "POST":
-            if "contribution_type" in self.request.POST:
-                initial["contribution_type"] = self.request.POST["contribution_type"]
-            if "team_for_player_stats" in self.request.POST:  # Tambahkan ini
-                initial["team_for_player_stats"] = self.request.POST[
-                    "team_for_player_stats"
-                ]
-            # Penting: player_to_update tidak perlu diinisialisasi karena queryset-nya akan disetel ulang di form.__init__
-            # initial['player_to_update'] = self.request.POST.get('player_to_update') # Hapus ini jika sebelumnya ada
-        return initial
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        if self.request.method == "POST":
-            kwargs["data"] = self.request.POST
-        return kwargs
-
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
@@ -42,25 +23,7 @@ class ContributeDataView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Kontribusi Data"
-
-        # Dapatkan instance form yang sedang digunakan
-        if "form" in kwargs:
-            current_form = kwargs["form"]
-        elif self.request.method == "POST":
-            current_form = self.get_form()
-        else:
-            current_form = self.get_form()
-
-        # Kirim nilai contribution_type dan team_for_player_stats yang dipilih ke template
-        context["selected_contribution_type"] = current_form.data.get(
-            "contribution_type", current_form.initial.get("contribution_type", "")
-        )
-        context["selected_team_for_player_stats"] = current_form.data.get(
-            "team_for_player_stats",
-            current_form.initial.get("team_for_player_stats", ""),
-        )  # Tambahkan ini
-
+        context["page_title"] = "Kontribusi Hasil Pertandingan"  # Ubah judul halaman
         return context
 
 
@@ -69,7 +32,7 @@ class ContributeDataSuccessView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = "Terima Kasih!"
+        context["page_title"] = "Kontribusi Berhasil!"
         return context
 
 
