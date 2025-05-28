@@ -4,7 +4,22 @@
 <title>Pertanyaan Umum — Waiya CUP 2025</title>
 <meta name="title" content="Pertanyaan Umum — Waiya CUP 2025" />
 <meta name="description" content="Halaman FAQ untuk Waiya CUP, menjawab pertanyaan umum tentang turnamen sepak bola antar kampung." />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{% url 'faq' %}" />
+<meta property="og:title" content="Pertanyaan Umum — Waiya CUP 2025" />
+<meta property="og:description" content="Halaman FAQ untuk Waiya CUP, menjawab pertanyaan umum tentang turnamen sepak bola antar kampung." />
+<meta property="og:image" content="{% static 'images/preview.png' %}" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="{% url 'faq' %}" />
+<meta property="twitter:title" content="Pertanyaan Umum — Waiya CUP 2025" />
+<meta property="twitter:description" content="Halaman FAQ untuk Waiya CUP, menjawab pertanyaan umum tentang turnamen sepak bola antar kampung." />
+<meta property="twitter:image" content="{% static 'images/preview.png' %}" />
 {% endblock title %}
+
 
 {% block content %}
  <div class="container mx-auto px-8 py-8">
