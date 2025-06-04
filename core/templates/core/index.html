@@ -88,11 +88,11 @@
 
     {# Dynamically include the snippet based on active_tab #}
     {% if active_tab == 'matches' %}
-      {% include "core/snippets/matches_list.html" %}
+      {% include "core/partials/matches_list.html" %}
     {% elif active_tab == 'standings' %}
-      {% include "core/snippets/group_table.html" %}
+      {% include "core/partials/group_table.html" %}
     {% elif active_tab == 'statistics' %}
-      {% include "core/snippets/statistics_summary.html" %}
+      {% include "core/partials/statistics_summary.html" %}
     {% endif %}
 
   </section>

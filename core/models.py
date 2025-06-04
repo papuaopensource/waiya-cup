@@ -6,6 +6,12 @@ from django.db import models
 class Team(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="Nama Tim")
     village = models.CharField(max_length=100, verbose_name="Asal Desa")
+    logo = models.ImageField(
+        upload_to="team_logos/",
+        blank=True,
+        null=True,
+        verbose_name="Logo Tim",
+    )
 
     class Meta:
         verbose_name = "Tim"

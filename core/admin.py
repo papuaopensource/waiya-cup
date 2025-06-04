@@ -12,6 +12,7 @@ class TeamAdmin(UnfoldAdmin):
     list_display = (
         "name",
         "village",
+        "logo",
     )
     search_fields = (
         "name",

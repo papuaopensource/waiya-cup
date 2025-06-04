@@ -159,8 +159,5 @@ UNFOLD = {
     },
 }
 
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-user-model
-# AUTH_USER_MODEL = "accounts.CustomUser"
-
 # https://django-tailwind.readthedocs.io/en/latest/settings.html#tailwind-app-name
 TAILWIND_APP_NAME = "theme"

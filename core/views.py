@@ -5,6 +5,7 @@ from collections import defaultdict
 from .models import Team, Player, Match, models
 from django.urls import reverse_lazy
 from .forms import DataContributionForm  # Import form yang baru dibuat
+from django.conf import settings
 
 import random
 
@@ -58,13 +59,16 @@ class HomeListView(TemplateView):
                     "date",
                     "time",
                     "team1__name",
+                    "team1__logo",
                     "team2__name",
+                    "team2__logo",
                     "score1",
                     "score2",
                     "group",
                     "status",
                     "matchday",
                 )
+                .order_by("status", "date", "time", "matchday")
             )
 
             # Konversi QuerySet ke list of dicts untuk manipulasi lebih mudah
@@ -107,7 +111,17 @@ class HomeListView(TemplateView):
                         "date": match["date"],
                         "time": match["time"],
                         "team1": match["team1__name"],
+                        "team1_logo": (
+                            f"{settings.MEDIA_URL}{match['team1__logo']}"
+                            if match["team1__logo"]
+                            else None
+                        ),
                         "team2": match["team2__name"],
+                        "team2_logo": (
+                            f"{settings.MEDIA_URL}{match['team2__logo']}"
+                            if match["team1__logo"]
+                            else None
+                        ),
                         "score1": match["score1"],
                         "score2": match["score2"],
                         "group": match["group"],
@@ -145,6 +159,7 @@ class HomeListView(TemplateView):
                 # Inisialisasi statistik tim jika belum ada dalam grup
                 if match.team1.name not in standings_by_group[group_name]:
                     standings_by_group[group_name][match.team1.name] = {
+                        "logo": match.team1.logo,
                         "name": match.team1.name,
                         "village": match.team1.village,
                         "mp": 0,
@@ -159,6 +174,7 @@ class HomeListView(TemplateView):
                     }
                 if match.team2.name not in standings_by_group[group_name]:
                     standings_by_group[group_name][match.team2.name] = {
+                        "logo": match.team2.logo,
                         "name": match.team2.name,
                         "village": match.team2.village,
                         "mp": 0,

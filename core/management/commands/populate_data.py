@@ -25,7 +25,7 @@ class Command(BaseCommand):
             {"name": "Waiya Jr", "village": "Bukit Tinggi"},
             {"name": "Bemta FC", "village": "Pusat Kota"},
             {"name": "PSK Kendate", "village": "Perkampungan Lama"},
-            {"name": "Arema FC", "village": "Lembah Hijau"},
+            {"name": "Arema FC", "village": "Kampung Maribu"},
             {"name": "Dobukuring FC", "village": "Perkebunan Kopi"},
             {"name": "PAS Demoi", "village": "Tanjung Laut"},
             {"name": "Pase Putra", "village": "Hutan Rimba"},
